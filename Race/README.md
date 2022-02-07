@@ -9,3 +9,8 @@ The class distribution is as follows:
 
 ![image](https://user-images.githubusercontent.com/54903276/152845505-2a46bc3e-765c-4f71-aedd-f2df60bc3481.png)
 
+Along with ethnicity:
+
+![image](https://user-images.githubusercontent.com/54903276/152845609-725bd426-3ef4-4532-8b43-2c241519bf4b.png)
+
+
