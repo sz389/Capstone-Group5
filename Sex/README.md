@@ -8,5 +8,6 @@ The dataset containing the metadata about each audio file looks like the table b
 
 The class distribution follows the table below:
 
-![image](https://user-images.githubusercontent.com/54903276/152843351-cd9b7a4e-714d-44b0-95d1-9516014f0636.png)
+![image](https://user-images.githubusercontent.com/54903276/152843449-5da08a68-a4e3-45e9-a2f9-447c8c97d507.png)
+
 
