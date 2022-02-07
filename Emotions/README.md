@@ -5,3 +5,7 @@ The model code was referenced from the following github repository https://githu
 The dataset used contains metadata about each audio file:
 ![image](https://user-images.githubusercontent.com/54903276/152839639-2366c610-afdc-41cb-92a3-c21fef91c929.png)
 
+The value counts of the emotions to look at the class distribution:
+![image](https://user-images.githubusercontent.com/54903276/152840702-e469632d-4b65-4992-8d71-4a2fcbff199a.png)
+
+
