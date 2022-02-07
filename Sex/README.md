@@ -1,4 +1,4 @@
-Sex classification, for the purpose of this study, will consist of classification between male and female voices. The dataset that is being used for this project also comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). 
+Sex classification, for the purpose of this study, will consist of classification between male and female voices. The dataset that is being used for this project also comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D) from this repository https://github.com/CheyneyComputerScience/CREMA-D
 
 The model code also comes from the following repository https://github.com/m3hrdadfi/soxan. The Wav2Vec2 model is used with a classification head. 
 
