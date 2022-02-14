@@ -13,8 +13,10 @@ from sklearn.metrics import accuracy_score, f1_score, hamming_loss, cohen_kappa_
 # %% --------------------------------------- Reading in CSV File with Labels -------------------------------------------------------------------
 os.chdir('..')
 csv_path = os.getcwd()+'/26-29_09_2017_KCL/'
-image_path = csv_path+'Spectrogram_Images/'
+# image_path = csv_path+'Spectrogram_Images/'
+image_path = csv_path+'Spectrogram_Images_split/'
 xdf_data1 = pd.read_csv(csv_path+'KCL_Image.csv')
+xdf_data1 = pd.read_csv(csv_path+'KCL_Image_split.csv')
 xdf_data1 = xdf_data1[['Disease','image_name']]
 xdf_data1.columns =['label','id']
 xdf_data1['id'] = image_path+xdf_data1['id']
@@ -29,9 +31,9 @@ from torch.autograd import Variable
 from sklearn.preprocessing import MultiLabelBinarizer
 # -----------------------------------------------------------------------------------
 # Hyper Parameters
-num_epochs = 15
-n_epoch = 15
-BATCH_SIZE = 1
+num_epochs = 20
+n_epoch = 20
+BATCH_SIZE = 33
 learning_rate = 0.001
 
 mlb = MultiLabelBinarizer()
@@ -220,10 +222,16 @@ class CNN(nn.Module):
         x = self.pad1(self.convnorm3(self.act(self.conv3(x))))
         x = self.act(self.convnorm4(self.act(self.conv4(x))))
         return self.linear(self.global_avg_pool(x).view(-1, 128))
+#%%
+from torchvision import models
 
+# model = models.resnet18(pretrained=True)
+model = models.resnet34(pretrained=True)
+model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
 #%%
 # -----------------------------------------------------------------------------------
-cnn = CNN().to('cuda')
+# cnn = CNN().to('cuda')
+cnn = model.to(device)
 # -----------------------------------------------------------------------------------
 # Loss and Optimizer
 criterion = nn.CrossEntropyLoss()
@@ -245,7 +253,7 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        if (i + 1) % 1 == 0:
+        if (i + 1) % 10 == 0:
             print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
                   % (epoch + 1, num_epochs, i + 1, len(xdf_dset) // BATCH_SIZE, loss.item()))
 #%%
@@ -512,10 +520,10 @@ torch.save(cnn.state_dict(), 'cnn.pkl')
 #
 #     return res_dict
 #%%
-train_ds,test_ds = read_data(target_type = 1)
-
-# OUTPUTS_a = len(class_names)
-
-list_of_metrics = ['acc', 'hlm']
-list_of_agg = ['avg']
-train_and_test(train_ds, test_ds, list_of_metrics, list_of_agg, save_on='acc')
+# train_ds,test_ds = read_data(target_type = 1)
+#
+# # OUTPUTS_a = len(class_names)
+#
+# list_of_metrics = ['acc', 'hlm']
+# list_of_agg = ['avg']
+# train_and_test(train_ds, test_ds, list_of_metrics, list_of_agg, save_on='acc')
