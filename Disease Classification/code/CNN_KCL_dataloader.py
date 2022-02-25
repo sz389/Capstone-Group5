@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, f1_score, hamming_loss, cohen_kappa_score, matthews_corrcoef, confusion_matrix
+from sklearn.metrics import classification_report
 import pydub
 import librosa
 import soundfile
@@ -25,6 +26,9 @@ import matplotlib.pyplot as plt
 # %% --------------------------------------- Reading in CSV File with Labels -------------------------------------------------------------------
 os.chdir('..')
 csv_path = os.getcwd()+'/26-29_09_2017_KCL/'
+model_path = csv_path +'saved_cnn/'
+if not os.path.exists(model_path):
+    os.makedirs(model_path)
 #%%
 xdf_data1 = pd.read_csv(csv_path+'KCL_trim_split_spec.csv')
 #%%
@@ -34,7 +38,7 @@ xdf_data1['id'] = csv_path+'mel_spectrograms/'+xdf_data1['id']
 #%%
 # Hyper Parameters
 num_epochs = 15
-BATCH_SIZE = 33
+BATCH_SIZE = 32
 learning_rate = 0.001
 from sklearn.preprocessing import LabelEncoder
 def process_target():
@@ -48,7 +52,8 @@ def process_target():
     le = LabelEncoder()
     le.fit(xtarget)
     final_target = le.transform(np.array(xdf_data1['label']))
-    class_names=(xtarget)
+    xtarget.reverse()
+    class_names=xtarget
     xdf_data1['label'] = final_target
     return class_names
 #%%
@@ -145,12 +150,13 @@ mlb = MultiLabelBinarizer()
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 THRESHOLD = 0.5
 from torchvision import models
-# model = models.resnet18(pretrained=True)
+model_name='resnet18'
+model = models.resnet18(pretrained=True)
 # model = models.resnet34(pretrained=True)
 # model = models.vgg16(pretrained=True)
-model = models.efficientnet_b2(pretrained=True)
-# model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
-model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,OUTPUTS_a)
+# model = models.efficientnet_b2(pretrained=True)
+model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
+# model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,OUTPUTS_a)
 cnn = model.to(device)
 # -----------------------------------------------------------------------------------
 # Loss and Optimizer
@@ -158,26 +164,67 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
 #%%
 # Train the Model
-for epoch in range(num_epochs):
-    cnn.train()
-    for i, (images, labels) in enumerate(train_loader):
-        images = Variable(images)
-        labels = Variable(labels)
-        images = images.to('cuda')
-        labels = labels.to('cuda')
+def train_test():
+    met_best = 0
+    for epoch in range(num_epochs):
+        cnn.train()
+        for i, (images, labels) in enumerate(train_loader):
+            images = Variable(images)
+            labels = Variable(labels)
+            images = images.to('cuda')
+            labels = labels.to('cuda')
 
-        # Forward + Backward + Optimize
-        optimizer.zero_grad()
-        outputs = cnn(images)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
+            # Forward + Backward + Optimize
+            optimizer.zero_grad()
+            outputs = cnn(images)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
 
-        if (i + 1) % 10 == 0:
-            print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
-                  % (epoch + 1, num_epochs, i + 1, len(xdf_dset) // BATCH_SIZE, loss.item()))
-# %%
-# Test the Model
+            if (i + 1) % ((len(xdf_dset) // BATCH_SIZE)//2) == 0:
+                print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
+                      % (epoch + 1, num_epochs, i + 1, len(xdf_dset) // BATCH_SIZE, loss.item()))
+    # %%
+    # Test the Model
+        cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
+        correct = 0
+        total = 0
+        y_pred = []
+        y_true = []
+        for images, labels in test_loader:
+            images = Variable(images).to("cuda")
+            outputs = cnn(images).detach().to(torch.device('cpu'))
+            #print(outputs)
+            _, predicted = torch.max(outputs.data, 1)
+            y_pred.extend(predicted)
+            #print(predicted)
+            total += labels.size(0)
+            labels = torch.argmax(labels, dim=1)
+            y_true.extend(labels)
+            correct += (predicted == labels).sum()
+
+        # Constant for classes
+        # classes = ('Female','Male')
+
+        # Build confusion matrix
+        cf_matrix = confusion_matrix(y_true, y_pred)
+        df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix) *2 , index=[i for i in class_names],
+                             columns=[i for i in class_names])
+        print('classification report: ')
+        print(classification_report(y_true, y_pred, target_names=class_names))
+        print('Confusion matrix: ')
+        print(df_cm)
+        f1 =f1_score(y_true, y_pred)
+        print(f'F1 score: {f1}')
+        print(f'Accuracy: {accuracy_score(y_true, y_pred)}')
+        if f1>met_best:
+            met_best=f1
+            torch.save(cnn.state_dict(), model_path+"model_{}.pt".format(model_name))
+            print('best model saved')
+#%%
+train_test()
+print('The result from the best model:')
+cnn.load_state_dict(torch.load(model_path+"model_{}.pt".format(model_name)))
 cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
 correct = 0
 total = 0
@@ -195,17 +242,17 @@ for images, labels in test_loader:
     y_true.extend(labels)
     correct += (predicted == labels).sum()
 
-# Constant for classes
-# classes = ('Female','Male')
-
-# Build confusion matrix
 cf_matrix = confusion_matrix(y_true, y_pred)
 df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix) *2 , index=[i for i in class_names],
                      columns=[i for i in class_names])
-
+print('classification report: ')
+print(classification_report(y_true, y_pred, target_names=class_names))
 print('Confusion matrix: ')
 print(df_cm)
-print('F1 score: ')
-print(f1_score(y_true, y_pred))
-print('Accuracy: ')
-print(accuracy_score(y_true, y_pred))
+f1 =f1_score(y_true, y_pred)
+print(f'F1 score: {f1}')
+print(f'Accuracy: {accuracy_score(y_true, y_pred)}')
+
+print(f'Distribution of data: ')
+for i in range(len(class_names)):
+    print(f'{class_names[i]}: {len(xdf_data1[xdf_data1.label==i])}')
