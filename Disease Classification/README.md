@@ -1,5 +1,5 @@
 # Disease Classification 
 
 ## Directory  
-Code/  
+code/  
 26-29_09_2017_KCL/  
