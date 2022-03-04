@@ -30,15 +30,17 @@ model_path = csv_path +'saved_cnn/'
 if not os.path.exists(model_path):
     os.makedirs(model_path)
 #%%
-xdf_data1 = pd.read_csv(csv_path+'KCL_trim_split_spec.csv')
+# xdf_data1 = pd.read_csv(csv_path+'KCL_spec.csv')
+xdf_data1 = pd.read_csv(csv_path+'1024_512_128_KCL_spec.csv')
 #%%
 xdf_data1 = xdf_data1[['label','img_name']]
 xdf_data1.columns =['label','id']
-xdf_data1['id'] = csv_path+'mel_spectrograms/'+xdf_data1['id']
+# xdf_data1['id'] = csv_path+'mel_spectrograms/'+xdf_data1['id']
+xdf_data1['id'] = csv_path+'try_image/'+xdf_data1['id']
 #%%
 # Hyper Parameters
 num_epochs = 15
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 learning_rate = 0.001
 from sklearn.preprocessing import LabelEncoder
 def process_target():
@@ -49,12 +51,14 @@ def process_target():
     :return:
     '''
     xtarget = list(np.array(xdf_data1['label'].unique()))
-    le = LabelEncoder()
-    le.fit(xtarget)
-    final_target = le.transform(np.array(xdf_data1['label']))
-    xtarget.reverse()
+    # le = LabelEncoder()
+    # le.fit(xtarget)
+    # final_target = le.transform(np.array(xdf_data1['label']))
+    # xtarget.reverse()
+    for i, label in enumerate(xtarget):
+        xdf_data1['label'].replace(label,i,inplace=True)
     class_names=xtarget
-    xdf_data1['label'] = final_target
+    # xdf_data1['label'] = final_target
     return class_names
 #%%
 IMAGE_SIZE=128
@@ -93,7 +97,6 @@ class Dataset(data.Dataset):
         img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
         X = torch.FloatTensor(img)
         X = torch.reshape(X, (3, IMAGE_SIZE, IMAGE_SIZE))
-
         return X, y
 #%%
 def read_data():
@@ -116,46 +119,67 @@ def read_data():
 xdf_dset, xdf_dset_test = train_test_split(xdf_data1, test_size=0.2, random_state=101, stratify=xdf_data1["label"])
 train_loader, test_loader = read_data()
 #%%
-from nnAudio import Spectrogram
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
+
         self.conv1 = nn.Conv2d(3, 16, (3, 3))
         self.convnorm1 = nn.BatchNorm2d(16)
         self.pad1 = nn.ZeroPad2d(2)
 
         self.conv2 = nn.Conv2d(16, 32, (3, 3))
         self.convnorm2 = nn.BatchNorm2d(32)
-        #
+        self.p = nn.MaxPool2d(2, 2)
+
         self.conv3 = nn.Conv2d(32,64,(3,3))
         self.convnorm3 = nn.BatchNorm2d(64)
 
         self.conv4 = nn.Conv2d(64,128,(3,3))
         self.convnorm4 = nn.BatchNorm2d(128)
+
+        self.conv5 = nn.Conv2d(128, 256, (3, 3))
+        self.convnorm5 = nn.BatchNorm2d(256)
+
+        self.conv6 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm6 = nn.BatchNorm2d(256)
+
+        self.conv7 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm7 = nn.BatchNorm2d(256)
+
+        self.conv8 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm8 = nn.BatchNorm2d(256)
+
+        self.conv9 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm9 = nn.BatchNorm2d(256)
+
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
 
-        self.linear = nn.Linear(128, OUTPUTS_a)
+        self.linear = nn.Linear(256, OUTPUTS_a)
         self.act = torch.relu
-
     def forward(self, x):
         x = self.pad1(self.convnorm1(self.act(self.conv1(x))))
-        x = self.pad1(self.convnorm2(self.act(self.conv2(x))))
-        # x = self.act(self.conv2(self.act(x)))
+        x = self.p(self.pad1(self.convnorm2(self.act(self.conv2(x)))))
         x = self.pad1(self.convnorm3(self.act(self.conv3(x))))
-        x = self.act(self.convnorm4(self.act(self.conv4(x))))
-        return self.linear(self.global_avg_pool(x).view(-1, 128))
+        x = self.p(self.pad1(self.convnorm4(self.act(self.conv4(x)))))
+        x = self.act(self.convnorm5(self.act(self.conv5(x))))
+        x = self.p(self.pad1(self.convnorm6(self.act(self.conv6(x)))))
+        x = self.pad1(self.convnorm7(self.act(self.conv7(x))))
+        x = self.p(self.pad1(self.convnorm8(self.act(self.conv8(x)))))
+        x = self.act(self.convnorm9(self.act(self.conv9(x))))
+
+        return self.linear(self.global_avg_pool(x).view(-1, 256))
 #%%
-# model=CNN()
+model=CNN()
 mlb = MultiLabelBinarizer()
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 THRESHOLD = 0.5
 from torchvision import models
-model_name='resnet18'
-model = models.resnet18(pretrained=True)
+model_name='cnn'
+# model = models.resnet18(pretrained=True)
 # model = models.resnet34(pretrained=True)
 # model = models.vgg16(pretrained=True)
 # model = models.efficientnet_b2(pretrained=True)
-model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
+# model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
 # model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,OUTPUTS_a)
 cnn = model.to(device)
 # -----------------------------------------------------------------------------------
