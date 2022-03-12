@@ -1,0 +1,1 @@
+autoencoder.py is a Python file that uses speech data concerning emotions to train an autoencoder, save only the encoder's model weights and biases and use them to train a CNN model. To use this file, you must first download CREMA_D_nopath.csv and CREMA_D_Image.csv
