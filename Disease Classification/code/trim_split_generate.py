@@ -62,13 +62,22 @@ for path in df['path']:
     file_name_list.append(str(path).split('/')[-1])
 #%%
 df['File Name'] = file_name_list
+df_train, df_test = train_test_split(df,random_state=42,test_size=0.2, stratify=df['Disease'])
 #%%
-def trim_split_generate(path_column,file_name_column,label_column):
+df_train.reset_index(inplace=True,drop=True)
+df_test.reset_index(inplace=True,drop=True)
+#%%
+def trim_split_generate(path_column,file_name_column,label_column,split="train"):
 # https://stackoverflow.com/questions/60105626/split-audio-on-timestamps-librosa
 # First load the file
     wav_name_list =[]
     img_name_list=[]
     label_list=[]
+    origin_list = []
+    # if split=='test':
+    #
+    # return wav_name_list,img_name_list,label_list,origin_list
+
     for i in range(len(path_column)):
         audio, sr = librosa.load(path_column[i],sr=16000)
         # split by silence and combine together
@@ -96,17 +105,39 @@ def trim_split_generate(path_column,file_name_column,label_column):
             out_filename = csv_path+'/trimed_audio/'+'split_'+str(counter)+'_'+file_name_column[i]
             # Write 10 second segment
             wav_name_list.append('split_'+str(counter)+'_'+file_name_column[i])
+            origin_list.append(file_name_column[i])
             sf.write(out_filename, block, sr)
             img_name=save_spectrogram(melspec_librosa(block),file_name_column[i],counter)
             img_name_list.append(img_name)
             label_list.append(label_column[i])
             counter += 1
             samples_wrote += buffer
-    return wav_name_list,img_name_list,label_list
-wav,img,label = trim_split_generate(df['path'],df['File Name'],df['Disease'])
+    return wav_name_list,img_name_list,label_list,origin_list
+wav,img,label,origin = trim_split_generate(df_train['path'],df_train['File Name'],df_train['Disease'])
+#%%
 df1 = pd.DataFrame()
 df1['wav_name'] = wav
 df1['img_name'] = img
 df1['label'] = label
+df1['origin'] = origin
+# label_list = []
+def hard_code(df1):
+    label_list = []
+    for i in df1['label']:
+        if i =='hc':
+            label_list.append(0)
+        else:
+            label_list.append(1)
+    return label_list
+df1['label_num'] = hard_code(df1)
 #%%
-df1.to_csv(csv_path+'KCL_trim_split_spec.csv',index=False)
+wav,img,label,origin = trim_split_generate(df_test['path'],df_test['File Name'],df_train['Disease'],split='test')
+df12 = pd.DataFrame()
+df12['wav_name'] = wav
+df12['img_name'] = img
+df12['label'] = label
+df12['origin'] = origin
+df12['label_num'] = hard_code(df12)
+#%%
+df1.to_csv(csv_path+'KCL_train_trim_split_spec.csv',index=False)
+df12.to_csv(csv_path+'KCL_test_trim_split_spec.csv',index=False)
