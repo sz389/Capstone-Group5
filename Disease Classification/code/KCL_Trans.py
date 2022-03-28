@@ -29,10 +29,23 @@ csv_path = os.getcwd()+'/26-29_09_2017_KCL/'
 model_path = csv_path +'saved_transformer/'
 if not os.path.exists(model_path):
     os.makedirs(model_path)
-df = pd.read_csv(csv_path+'KCL_trim_split_spec.csv')
-df = df[['label','wav_name']]
-df.columns =['label','id']
-df['id'] = csv_path+'trimed_audio/'+df['id']
+# df = pd.read_csv(csv_path+'KCL_trim_split_spec.csv')
+# df = df[['label','wav_name']]
+# df.columns =['label','id']
+# df['id'] = csv_path+'trimed_audio/'+df['id']
+#%%
+df_train,df_test = pd.read_csv(csv_path+'/trainset4trans.csv'),\
+                    pd.read_csv(csv_path+'/testset4trans.csv')
+# data_files = {
+#     "train": csv_path + "KCL_split_train.csv",
+#     "validation": csv_path + "KCL_split_test.csv",
+# }
+#
+# dataset = load_dataset("csv", data_files=data_files, delimiter="\t", )
+# train_dataset = dataset["train"]
+# eval_dataset = dataset["validation"]
+#%%
+df = pd.concat([df_train,df_test])
 #%%
 model_checkpoint = "facebook/wav2vec2-base"
 OUTPUTS_a =2
@@ -52,6 +65,8 @@ def process_target():
     df['label'] = final_target
     return class_names
 labels = process_target()
+df_train,df_test = df.iloc[:df_train.shape[0],:],df.iloc[df_train.shape[0]:,:]
+
 class dataset(data.Dataset):
     '''
     From : https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
@@ -68,12 +83,12 @@ class dataset(data.Dataset):
         # Select sample
         # Load data and get label
         y=self.df.label.iloc[index]
-        labels_ohe = np.zeros(OUTPUTS_a)
-        for idx, label in enumerate(range(OUTPUTS_a)):
-            if label == y:
-                labels_ohe[idx] = 1
-        y = torch.FloatTensor(labels_ohe)
-        file_name = self.df.id.iloc[index]
+        # labels_ohe = np.zeros(OUTPUTS_a)
+        # for idx, label in enumerate(range(OUTPUTS_a)):
+        #     if label == y:
+        #         labels_ohe[idx] = 1
+        # y = torch.FloatTensor(labels_ohe)
+        file_name = self.df.path.iloc[index]
         X,sr = librosa.load(file_name,sr=feature_extractor.sampling_rate)
         # X = feature_extractor(
         #     X,
@@ -85,10 +100,10 @@ class dataset(data.Dataset):
         return dict
 #%%
 feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
-train_df, test_df = train_test_split(df, test_size=0.2, random_state=101, stratify=df["label"])
+# train_df, test_df = train_test_split(df, test_size=0.2, random_state=101, stratify=df["label"])
 metric = load_metric("accuracy",'f1')
-trainset = dataset(train_df)
-testset = dataset(test_df)
+trainset = dataset(df_train)
+testset = dataset(df_test)
 #%%
 label2id, id2label = dict(), dict()
 for i, label in enumerate(labels):
