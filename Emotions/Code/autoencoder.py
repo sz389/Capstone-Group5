@@ -203,119 +203,291 @@ train_loader, test_loader = read_data(1)
 
 #%%
 #=======================AUTOENCODER==================
-class AutoEncoder1(nn.Module):
-    def __init__(self):
-        super(AutoEncoder1, self).__init__() #256
-        self.encoder = nn.Sequential(
-            nn.Conv2d(3, 16, (3, 3), padding='same'), #128 * 16
-            nn.ReLU(),
-            nn.BatchNorm2d(16),
-
-            nn.Conv2d(16, 32, (3, 3), padding='same'), #128 * 32
-            nn.ReLU(),
-            nn.BatchNorm2d(32),
-            nn.MaxPool2d(2, 2),#128
-
-            nn.Conv2d(32, 64, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(64),
-
-            nn.Conv2d(64, 128, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(128),
-            nn.MaxPool2d(2, 2),  # 64
-
-            nn.Conv2d(128, 256, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            #nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(256, 256, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            nn.MaxPool2d(2, 2), # 32
-
-            nn.Conv2d(256, 256, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-
-            nn.Conv2d(256, 256, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            nn.MaxPool2d(2, 2), #16
-
-            nn.Conv2d(256, 256, (3, 3), padding='same'),
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            #nn.MaxPool2d(2, 2),
-            #nn.ReLU()
-
-            nn.Flatten(start_dim=1), #[64,256 ,16, 16]
-
-            nn.Linear(int(256 * 8 * 8), 128),
-
-            nn.Linear(128, 64)
-
-            #nn.Linear(64, 32)
-
-
-        )
-        self.decoder = nn.Sequential(
-
-            nn.Linear(64, 128),
-
-            nn.Linear(128, int(256 * 8 * 8)),
-
-            nn.Unflatten(dim=1, unflattened_size=(256,8,8)), #8
-
-            nn.ConvTranspose2d(256, 256, (3, 3)), #10
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            #nn.Upsample(scale_factor=2),
-
-            nn.ConvTranspose2d(256, 256, (3, 3)), #12
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-
-            nn.ConvTranspose2d(256, 256, (3, 3)), #14
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-            nn.Upsample(scale_factor=2),  # 28
-
-            nn.ConvTranspose2d(256, 256, (3, 3)), #30
-            nn.ReLU(),
-            nn.BatchNorm2d(256),
-
-            nn.ConvTranspose2d(256, 128, (3, 3)), #32
-            nn.ReLU(),
-            nn.BatchNorm2d(128),
-            nn.Upsample(scale_factor = 2),#64
-
-            nn.ConvTranspose2d(128, 64, (3, 3), padding = (1,1)),#64
-            nn.ReLU(),
-            nn.BatchNorm2d(64),
-            #nn.Upsample(scale_factor = 2)
-
-            nn.ConvTranspose2d(64, 32, (3, 3), padding = (1,1)),#64
-            nn.ReLU(),
-            nn.BatchNorm2d(32),
-            nn.Upsample(scale_factor=2),#128
-
-            nn.ConvTranspose2d(32, 16, (3, 3), padding = (1,1)),#128
-            nn.ReLU(),
-            nn.BatchNorm2d(16),
-            #nn.Upsample(scale_factor=2),
-
-            nn.ConvTranspose2d(16, 3, (3, 3), padding = (1,1)),#128
-            nn.ReLU(),
-            nn.BatchNorm2d(3),
-            #nn.Upsample(scale_factor=2)
-        )
-
+# class AutoEncoder1(nn.Module):
+#     def __init__(self):
+#         super(AutoEncoder1, self).__init__() #256
+#         self.encoder = nn.Sequential(
+#             nn.Conv2d(3, 16, (3, 3), padding='same'), #128 * 16
+#             nn.ReLU(),
+#             nn.BatchNorm2d(16),
+#
+#             nn.Conv2d(16, 32, (3, 3), padding='same'), #128 * 32
+#             nn.ReLU(),
+#             nn.BatchNorm2d(32),
+#             nn.MaxPool2d(2, 2),#128
+#
+#             nn.Conv2d(32, 64, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(64),
+#
+#             nn.Conv2d(64, 128, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(128),
+#             nn.MaxPool2d(2, 2),  # 64
+#
+#             nn.Conv2d(128, 256, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             #nn.MaxPool2d(2, 2),
+#
+#             nn.Conv2d(256, 256, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             nn.MaxPool2d(2, 2), # 32
+#
+#             nn.Conv2d(256, 256, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#
+#             nn.Conv2d(256, 256, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             nn.MaxPool2d(2, 2), #16
+#
+#             nn.Conv2d(256, 256, (3, 3), padding='same'),
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             #nn.MaxPool2d(2, 2),
+#             #nn.ReLU()
+#
+#             nn.Flatten(start_dim=1), #[64,256 ,16, 16]
+#
+#             nn.Linear(int(256 * 8 * 8), 128),
+#
+#             nn.Linear(128, 64),
+#
+#             nn.Linear(64,32),
+#             nn.Linear(32,16),
+#             nn.Linear(16, 8)
+#
+#
+#         )
+#         self.decoder = nn.Sequential(
+#
+#             nn.Linear(8, 16),
+#
+#             nn.Linear(16, 32),
+#
+#             nn.Linear(32, 64),
+#
+#             nn.Linear(64, 128),
+#
+#             nn.Linear(128, int(256 * 8 * 8)),
+#
+#             nn.Unflatten(dim=1, unflattened_size=(256,8,8)), #8
+#
+#             nn.ConvTranspose2d(256, 256, (3, 3)), #10
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             #nn.Upsample(scale_factor=2),
+#
+#             nn.ConvTranspose2d(256, 256, (3, 3)), #12
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#
+#             nn.ConvTranspose2d(256, 256, (3, 3)), #14
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#             nn.Upsample(scale_factor=2),  # 28
+#
+#             nn.ConvTranspose2d(256, 256, (3, 3)), #30
+#             nn.ReLU(),
+#             nn.BatchNorm2d(256),
+#
+#             nn.ConvTranspose2d(256, 128, (3, 3)), #32
+#             nn.ReLU(),
+#             nn.BatchNorm2d(128),
+#             nn.Upsample(scale_factor = 2),#64
+#
+#             nn.ConvTranspose2d(128, 64, (3, 3), padding = (1,1)),#64
+#             nn.ReLU(),
+#             nn.BatchNorm2d(64),
+#             #nn.Upsample(scale_factor = 2)
+#
+#             nn.ConvTranspose2d(64, 32, (3, 3), padding = (1,1)),#64
+#             nn.ReLU(),
+#             nn.BatchNorm2d(32),
+#             nn.Upsample(scale_factor=2),#128
+#
+#             nn.ConvTranspose2d(32, 16, (3, 3), padding = (1,1)),#128
+#             nn.ReLU(),
+#             nn.BatchNorm2d(16),
+#             #nn.Upsample(scale_factor=2),
+#
+#             nn.ConvTranspose2d(16, 3, (3, 3), padding = (1,1)),#128
+#             nn.ReLU(),
+#             nn.BatchNorm2d(3),
+#             #nn.Upsample(scale_factor=2)
+#         )
+#
+#     def forward(self, x):
+#         encoded = self.encoder(x)
+#         decoded = self.decoder(encoded)
+#         return encoded, decoded
+class Encoder(nn.Module):
+    def __init__(self, encoded_space_dim, jj , kk):
+        super().__init__()
+        channels = 3 ; ch1 = 16 ; ch2 = 32 ; ch3 = 64
+        kernel_size = (4, 4); padding = (0, 0) ; stride = (2, 2)
+        self.enc1 = nn.Conv2d(in_channels=channels, out_channels=ch1, kernel_size=kernel_size,  stride=stride, padding=padding)
+        self.relu = nn.ReLU(True)
+        self.enc2= nn.Conv2d(in_channels=ch1, out_channels=ch2, kernel_size=kernel_size,  stride=stride, padding=padding)
+        self.batchnorm = nn.BatchNorm2d(ch2)
+        self.relu = nn.ReLU(True)
+        self.enc3= nn.Conv2d(in_channels=ch2, out_channels=ch3, kernel_size=kernel_size,  stride=stride, padding=padding)
+        self.relu = nn.ReLU(True)
+        self.flatten = nn.Flatten(start_dim=1)
+        self.encoder_lin = nn.Sequential(nn.Linear(int(ch3 * jj * kk), 128),  nn.Linear(128, encoded_space_dim)) # nn.ReLU(True)
     def forward(self, x):
-        encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
-        return encoded, decoded
+        # input: [64, 3, 128, 128]
+        x = self.enc1(x)  # output: [64, 16, 63, 63]
+        # note: with padding (0,0), height - 1 and width - 1, with padding (1,1) height = 64, width = 64
+        # x = self.relu(x)
+        x = torch.tanh(x)  # input/output: [64, 16, 63, 63]
+        x = self.enc2(x)  # output: [64, 32, 30, 30]
+        x = self.batchnorm(x)  # output: [64, 32, 30, 30]
+        # x = self.relu(x)
+        x = torch.tanh(x)  # output: [64, 32, 30, 30]
+        x = self.enc3(x)  # output: [64, 64, 14, 14]
+        x = torch.tanh(x)  # output: [64, 64, 14, 14]
+        y = self.flatten(x) #output: [64, 12544] = [64, 64 * 14 * 14]
+        x = self.encoder_lin(y) #output: [64, 64]
+        return x #return: [64, 64]
+
+def cal(max_sent):
+    kernel_size = (4,4); padding = (0,0); dilate = (1,1); maxpool = (1,1); stride = (2,2)
+
+    jj = np.ceil(((max_sent + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+    kk = np.ceil(((max_sent + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+
+
+    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+
+
+    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0]- 1)) / (maxpool[0] * stride[0]))
+    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+
+    return int(jj) ,int(kk)
+
+
+class Decoder(nn.Module):
+    def __init__(self, encoded_space_dim,jj, kk):
+        super().__init__()
+        channels= 3; ch1= 16; ch2=32; ch3=64;
+        kernel_size = (4, 4);  padding = (1, 0);  stride = (2,2); padding1=(0,0)
+        self.decoder_lin = nn.Sequential( nn.Linear(encoded_space_dim, 128),  nn.Linear(128, int(ch3 * jj * kk))) # nn.ReLU(True)
+        self.unflatten = nn.Unflatten(dim=1, unflattened_size=(ch3, jj, kk))
+        self.dec1 = nn.ConvTranspose2d(in_channels=ch3, out_channels=ch2, kernel_size=kernel_size, stride=stride, padding=padding1,  output_padding=(0,0))
+        self.batchnorm1 = nn.BatchNorm2d(ch2)
+        self.relu = nn.ReLU(True)
+        self.dec2 = nn.ConvTranspose2d(in_channels=ch2, out_channels=ch1, kernel_size=kernel_size, stride=stride, padding=padding1, output_padding=(0,0))
+        self.batchnorm2= nn.BatchNorm2d(ch1)
+        self.relu = nn.ReLU(True)
+        self.dec3 = nn.ConvTranspose2d(in_channels=ch1, out_channels=channels, kernel_size=kernel_size, stride=stride,padding=padding1, output_padding=padding1)
+    def forward(self, x):
+        x = self.decoder_lin(x) ##input: [64,64] output: [64, 12544]
+        x = self.unflatten(x) #output: [64, 64, 14, 14]
+        # x = self.decoder_conv(x)
+        x = self.dec1(x) #output: [64, 32, 30, 30]
+        x = self.batchnorm1(x) #output: [64, 32, 30, 30]
+        # x = self.relu(x)
+        x = torch.tanh(x) #output: [64, 32, 30, 30]
+        x = self.dec2(x) #output: [64, 16, 63, 63] #with output padding (0,0) = [64, 16, 62, 62]
+        x = self.batchnorm2(x) #output: [64, 16, 63, 63]
+        # x = self.relu(x)
+        x = torch.tanh(x) #output: [64, 16, 63, 63]
+        x = self.dec3(x) #output: [64, 3, 128, 128]
+        x = torch.tanh(x) #output: [64, 3, 128, 128]
+        return x #return: [64, 3, 128, 128]
+#
+# class Encoder(nn.Module):
+#     def __init__(self, encoded_space_dim, jj , kk):
+#         super().__init__()
+#         kernel_size = (4, 4); padding = (0, 0) ; stride = (2, 2)
+#
+#         self.enc1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=kernel_size,  stride=stride, padding=padding)
+#         self.relu = nn.ReLU(True)
+#         self.enc2= nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernel_size,  stride=stride, padding=padding)
+#         self.batchnorm = nn.BatchNorm2d(32)
+#         self.relu = nn.ReLU(True)
+#         self.enc3= nn.Conv2d(in_channels=32, out_channels=64, kernel_size=kernel_size,  stride=stride, padding=padding)
+#         self.relu = nn.ReLU(True)
+#         self.enc4= nn.Conv2d(in_channels=64, out_channels=128, kernel_size=kernel_size,  stride=stride, padding=padding)
+#         self.batchnorm2 = nn.BatchNorm2d(128)
+#         self.relu = nn.ReLU(True)
+#         self.enc5= nn.Conv2d(in_channels=128, out_channels=256, kernel_size=kernel_size,  stride=stride, padding=padding)
+#         self.relu = nn.ReLU(True)
+#
+#         self.flatten = nn.Flatten(start_dim=1)
+#         self.encoder_lin = nn.Sequential(nn.Linear(int(64 * jj * kk), 128),  nn.Linear(128, encoded_space_dim)) # nn.ReLU(True)
+#
+#     def forward(self, x):
+#         # input: [64, 3, 128, 128]
+#         x = self.enc1(x)
+#         x = self.relu(x)
+#         x = self.enc2(x)
+#         x = self.batchnorm(x)
+#         x = self.relu(x)
+#         x = self.enc3(x)
+#         x = self.relu(x)
+#         x = self.enc4(x)
+#         x = self.bathnorm2(x)
+#         x = self.relu(x)
+#         x = self.enc5(x)
+#         x = self.relu(x)
+#         y = self.flatten(x)
+#         x = self.encoder_lin(y)
+#         return x #return: [64, 64]
+#
+# def cal(max_sent):
+#     kernel_size = (4,4); padding = (0,0); dilate = (1,1); maxpool = (1,1); stride = (2,2)
+#
+#     jj = np.ceil(((max_sent + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+#     kk = np.ceil(((max_sent + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+#
+#
+#     jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+#     kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+#
+#
+#     jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0]- 1)) / (maxpool[0] * stride[0]))
+#     kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+#
+#     return int(jj) ,int(kk)
+#
+#
+# class Decoder(nn.Module):
+#     def __init__(self, encoded_space_dim,jj, kk):
+#         super().__init__()
+#         kernel_size = (4, 4);  padding = (1, 0);  stride = (2,2); padding1=(0,0)
+#
+#         self.decoder_lin = nn.Sequential( nn.Linear(encoded_space_dim, 128),  nn.Linear(128, int(64 * jj * kk))) # nn.ReLU(True)
+#         self.unflatten = nn.Unflatten(dim=1, unflattened_size=(64, jj, kk))
+#
+#         self.dec1 = nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=kernel_size, stride=stride, padding=padding1,  output_padding=(0,0))
+#         self.batchnorm1 = nn.BatchNorm2d(32)
+#         self.relu = nn.ReLU(True)
+#         self.dec2 = nn.ConvTranspose2d(in_channels=32, out_channels=16, kernel_size=kernel_size, stride=stride, padding=padding1, output_padding=(0,0))
+#         self.batchnorm2= nn.BatchNorm2d(16)
+#         self.relu = nn.ReLU(True)
+#         self.dec3 = nn.ConvTranspose2d(in_channels=16, out_channels=3, kernel_size=kernel_size, stride=stride,padding=padding1, output_padding=padding1)
+#
+#     def forward(self, x):
+#         x = self.decoder_lin(x)
+#         x = self.unflatten(x)
+#         # x = self.decoder_conv(x)
+#         x = self.dec1(x)
+#         x = self.batchnorm1(x)
+#         # x = self.relu(x)
+#         x = torch.tanh(x)
+#         x = self.dec2(x)
+#         x = self.batchnorm2(x)
+#         # x = self.relu(x)
+#         x = torch.tanh(x)
+#         x = self.dec3(x)
+#         x = torch.tanh(x)
+#         return x
 
 
 
@@ -335,42 +507,38 @@ import torch
 import torch.nn as nn
 
 batch_size = 64
-epochs = 10
+epochs = 200
 lr = 1e-3
 d = 64
 
-def cal(max_sent):
-    kernel_size = (4,4); padding = (0,0); dilate = (1,1); maxpool = (1,1); stride = (2,2)
-
-    jj = np.ceil(((max_sent + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((max_sent + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
-
-
-    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
-
-
-    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0]- 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
-
-    return int(jj) ,int(kk)
-
 max_sent = IMAGE_SIZE
-jj, kk = cal(max_sent) #jj = 14, kk = 14
-autoencoder = AutoEncoder1().to(device)
+# jj, kk = cal(max_sent) #jj = 14, kk = 14
+#autoencoder = AutoEncoder1().to(device)
+jj, kk = cal(max_sent)
 
+encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
+decoder = Decoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 params_to_optimize = [
-    {'params': autoencoder.parameters()}
+    {'params': encoder.parameters()},
+    {'params': decoder.parameters()}
 ]
+
+# params_to_optimize = [
+#     {'params': autoencoder.parameters()}
+# ]
 optimizer = torch.optim.AdamW(params_to_optimize, lr=lr)
 criterion = nn.MSELoss()
 for epoch in range(epochs):
-    autoencoder.train()
+    # autoencoder.train()
+    encoder.train()
+    decoder.train()
     loss = []
     for batch_features, label in train_loader:
         batch_features = batch_features.to(device)
         optimizer.zero_grad()
-        encoded_data, decoded_data = autoencoder(batch_features.float())
+        #encoded_data, decoded_data = autoencoder(batch_features.float())
+        encoded_data = encoder(batch_features.float())
+        decoded_data = decoder(encoded_data)
         train_loss = criterion(decoded_data, batch_features.float())
         train_loss.backward()
         optimizer.step()
@@ -380,7 +548,9 @@ for epoch in range(epochs):
     print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, losses))
 
 PATH_SAVE = "/home/ubuntu/capstone/saved_autoencoder/"
-torch.save(autoencoder.encoder.state_dict(), PATH_SAVE + 'model_autoencoder_only_encoder_10.pt')
+#torch.save(autoencoder.encoder.state_dict(), PATH_SAVE + 'model_autoencoder_only_encoder_added3linear.pt')
+# torch.save(encoder.state_dict(), PATH_SAVE + 'jafari_encoder.pt')
+torch.save(decoder.state_dict(), PATH_SAVE + 'jafari_decoder.pt')
 
 temp = decoded_data.detach().to(torch.device('cpu')).numpy()[0].transpose(1,2,0) * 255
 cv2.imwrite(PATH_SAVE + 'test_see_model2.jpg',temp)
@@ -443,7 +613,10 @@ class CNN(nn.Module):
 
             nn.Flatten(start_dim=1),  # [64,256 ,8, 8]
             nn.Linear(int(256 * 8 * 8), 128),
-            nn.Linear(128, 64)
+            nn.Linear(128, 64),
+            nn.Linear(64,32),
+            nn.Linear(32,16),
+            nn.Linear(16, 8)
          )
     def forward(self, x):
         encoded = self.encoder(x)
@@ -461,15 +634,15 @@ class add_linear(nn.Module):
 
 #%%
 # Hyper Parameters
-num_epochs = 25
+num_epochs = 100
 batch_size = 64 #64
 learning_rate = 0.00002
 IMAGE_SIZE = 128
 
 PATH_SAVE = "/home/ubuntu/capstone/saved_autoencoder/"
-state_dict = torch.load(f=PATH_SAVE+'model_autoencoder_only_encoder.pt')
-
-#model_autoencoder_only_encoder.pt = 200 epochs
+state_dict = torch.load(f=PATH_SAVE+'jafari_encoder.pt')
+#"model_autoencoder_only_encoder" = 200 epochs, 9 Convolution, 2 Linear Layers
+#"model_autoencoder_only_encoder_added3linear" = 200 epochs, 9 Convolution, 5 Linear Layers
 
 #create new OrderedDict that does not contain `module.`
 from collections import OrderedDict
@@ -479,13 +652,12 @@ for k, v in state_dict.items():
     new_state_dict[name] = v
 
 
-cnn = CNN()
-cnn.load_state_dict(new_state_dict)
+cnn = Encoder(encoded_space_dim=d, jj=jj, kk=kk)
+cnn.load_state_dict(state_dict)
 cnn = add_linear(cnn)
 cnn = cnn.to(device)
-#cnn.encoder[-1] = nn.Linear(128, OUTPUTS_a)
 
-criterion = nn.MSELoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
 
 #%%
@@ -497,8 +669,7 @@ if not os.path.exists(model_path):
    os.makedirs(model_path)
 
 classes = ['ANG', 'DIS', 'FEA', 'HAP', 'NEU', 'SAD']
-patience = 4
-
+patience = 10
 
 print("Starting CNN...")
 for epoch in range(num_epochs):
@@ -589,13 +760,13 @@ df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix) * 2, index=[i for i in classe
                      columns=[i for i in classes])
 print()
 print("Final Scores")
-print()
-print(epoch_best)
+# print()
+# print(epoch_best)
 print()
 print('Confusion matrix: ')
 print(df_cm)
 print('F1 score: ')
-print(met_best)
+print(f1_score(y_true, y_pred, average = 'weighted'))
 print('Precision: ')
 print(precision_score(y_true, y_pred, average = 'weighted'))
 print('Recall: ')
