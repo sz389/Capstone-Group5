@@ -9,22 +9,19 @@ import pandas as pd
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 train_df = pd.read_csv("...")
-train_loader = dataloader(train_df)
+test_df = pd.read_csv("...")
 
-model_name = 'autoencoder'
-csv_path = os.getcwd()
-model_path = csv_path +'/saved_autoencoder/'
-if not os.path.exists(model_path):
-    os.makedirs(model_name)
+train_loader, test_loader = dataloader(train_df, test_df, OUTPUTS_a = 6, BATCH_SIZE = 64, IMAGE_SIZE=128)
+#xdf_dset, xdf_dset_test, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128
 
 batch_size = 64
 epochs = 5
 lr = 1e-3
 d = 64
 IMAGE_SIZE  = 128
+num_layers = 3
 
-max_sent = IMAGE_SIZE
-jj, kk = cal(max_sent)
+jj, kk = cal(IMAGE_SIZE, num_layers)
 encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 decoder = Decoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 
@@ -56,8 +53,5 @@ for epoch in range(epochs):
     print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, losses))
 
 PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
-
-torch.save(encoder.state_dict(), PATH_SAVE + 'encoder.pt')
-torch.save(decoder.state_dict(), PATH_SAVE + 'decoder.pt')
-
-
+torch.save(encoder.state_dict(), PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers))
+torch.save(decoder.state_dict(), PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers))
