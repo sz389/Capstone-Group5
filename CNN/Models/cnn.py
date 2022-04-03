@@ -6,12 +6,12 @@ import pandas as pd
 from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
 
 class CNN(nn.Module):
-    def __init__(self, encoded_space_dim, jj, kk, OUTPUTS_a):
+    def __init__(self, encoded_space_dim, jj, kk):
         super().__init__()
         channels = 3 ; ch1 = 16 ; ch2 = 32 ; ch3 = 64
         kernel_size = (4, 4); padding = (0, 0) ; stride = (2, 2)
 
-        self.enc1 = nn.Conv2d(in_channels=channels, out_channels=ch1, kernel_size=kernel_size,  stride=stride, padding=padding)
+        self.enc1 = nn.Conv2d(in_channels= channels, out_channels=ch1, kernel_size=kernel_size,  stride=stride, padding=padding)
         #self.relu = nn.ReLU(True)
         self.enc2= nn.Conv2d(in_channels=ch1, out_channels=ch2, kernel_size=kernel_size,  stride=stride, padding=padding)
         self.batchnorm = nn.BatchNorm2d(ch2)
@@ -20,7 +20,6 @@ class CNN(nn.Module):
         #self.relu = nn.ReLU(True)
         self.flatten = nn.Flatten(start_dim=1)
         self.encoder_lin = nn.Sequential(nn.Linear(int(ch3 * jj * kk), 128),  nn.Linear(128, encoded_space_dim)) # nn.ReLU(True)
-        self.classifier = nn.linear(64, OUTPUTS_a)
 
     def forward(self, x):
         # input: [64, 3, 128, 128]
@@ -36,22 +35,26 @@ class CNN(nn.Module):
         x = torch.tanh(x)  # output: [64, 64, 14, 14]
         y = self.flatten(x) #output: [64, 12544] = [64, 64 * 14 * 14]
         x = self.encoder_lin(y) #output: [64, 64]
-        x = self.classifier(x)
         return x #return: [64, 64]
+
 
 
 def train_and_test(cnn, train_loader, test_loader, classes, num_layers, num_epochs = 10, batch_size = 64, learning_rate = 1E-3):
 
     model_path = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 
+
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
+
+    patience = 4
+    met_best = 0
 
     for epoch in range(num_epochs):
 
         for i, (images, labels) in enumerate(train_loader):
 
-            cnn.train()
+            cnn.train().to('cuda')
 
             images = Variable(images)
             labels = Variable(labels)
@@ -67,7 +70,7 @@ def train_and_test(cnn, train_loader, test_loader, classes, num_layers, num_epoc
 
             if (i + 1) % 10 == 0:
                 print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
-                      % (epoch + 1, num_epochs, i + 1, len(train_loader.df) // batch_size, loss.item()))
+                      % (epoch + 1, num_epochs, i + 1, len(train_loader.dataset) // batch_size, loss.item()))
 
         # Test the Model
         cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
@@ -151,3 +154,13 @@ def evalute_best_model(cnn, test_loader, classes, num_layers):
     print(recall_score(y_true, y_pred, average='weighted'))
     print('Accuracy: ')
     print(accuracy_score(y_true, y_pred))
+
+class add_linear(nn.Module):
+    def __init__(self, CNN, OUTPUTS_a):
+        super().__init__()
+        self.model = CNN
+        self.classifier = nn.Linear(64, OUTPUTS_a)
+    def forward(self,x):
+        x = self.model(x)
+        x = self.classifier(x)
+        return x
