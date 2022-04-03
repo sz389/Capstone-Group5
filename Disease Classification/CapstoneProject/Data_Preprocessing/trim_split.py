@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import librosa.display
 import argparse
 from generate_mel_spectrograms import melspec_librosa,save_spectrogram
+from utility import hard_code_parkinson,get_filename
 #%%
 def trim_split(path_column,file_name_column,label_column,csv_path):
 # https://stackoverflow.com/questions/60105626/split-audio-on-timestamps-librosa
@@ -39,7 +40,7 @@ def trim_split(path_column,file_name_column,label_column,csv_path):
                 buffer = samples_total - samples_wrote
             block = wav_data[samples_wrote : (samples_wrote + buffer)]
             block = np.array(block)
-            img_name = save_spectrogram(melspec_librosa(audio), 'split_'+str(counter)+'_'+file_name_column[i],
+            img_name = save_spectrogram(melspec_librosa(block), 'split_'+str(counter)+'_'+file_name_column[i],
                                         save_path+'/mel_spectrograms/')
             img_name_list.append(img_name)
             # out_filename = "split_" + str(counter) + "_" + file_name
@@ -52,19 +53,6 @@ def trim_split(path_column,file_name_column,label_column,csv_path):
             counter += 1
             samples_wrote += buffer
     return wav_name_list,img_name_list,label_list,origin_list
-def get_filename(path_list):
-    file_name_list = []
-    for path in path_list:
-        file_name_list.append(str(path).split('/')[-1])
-    return file_name_list
-def hard_code_parkinson(df1_label):
-    label_list = []
-    for i in df1_label:
-        if i =='hc':
-            label_list.append(0)
-        else:
-            label_list.append(1)
-    return label_list
 def save_df_csv(wav,img,label,origin):
     df12 = pd.DataFrame()
     df12['id'] = wav

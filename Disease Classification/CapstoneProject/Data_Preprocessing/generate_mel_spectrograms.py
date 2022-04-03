@@ -9,6 +9,8 @@ import librosa
 import librosa.display
 import tqdm
 import soundfile as sf
+import argparse
+from utility import get_filename
 #%%
 def melspec_librosa(x,sample_rate = 16000,
     n_fft = 1024,
@@ -41,12 +43,12 @@ def save_spectrogram(spec,file,path, aspect='auto', xmax=None):
       path+'/' + file + ".jpg",
       bbox_inches='tight', pad_inches=0)
   return path+'/'+file + ".jpg"
-def generate_spec(path_column,file_name_column,label_column,origin,label_num):
-    wav_name_list =[]
-    origin_list = []
+def generate_spec(path_column,file_name_column,label_column,save_path):
+    # wav_name_list =[]
+    # origin_list = []
     img_name_list=[]
     label_list=[]
-    labelnum_list = []
+    # labelnum_list = []
     for i in range(len(path_column)):
         audio, sr = librosa.load(path_column[i],sr=16000)
         # out_filename = "split_" + str(counter) + "_" + file_name
@@ -55,9 +57,31 @@ def generate_spec(path_column,file_name_column,label_column,origin,label_num):
         # wav_name_list.append('aug_'+file_name_column[i])
         # audio= time_stretch(audio,0.5)
         # sf.write(out_filename, audio, sr)
-        img_name=save_spectrogram(melspec_librosa(audio),file_name_column[i])
+        img_name=save_spectrogram(melspec_librosa(audio,n_mels=180),file_name_column[i],save_path+'/mel_spectrograms/')
         img_name_list.append(img_name)
-        origin_list.append(origin[i])
-        labelnum_list.append(label_num[i])
+        # origin_list.append(origin[i])
+        # labelnum_list.append(label_num[i])
         label_list.append(label_column[i])
-    return img_name_list,label_list,labelnum_list,origin_list
+    return img_name_list,label_list
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--csv_path", default=None, type=str, required=True)  # Path of csv to load
+    parser.add_argument("--save_path", default=None, type=str, required=True)  # Path to save the csv file
+    parser.add_argument('--save_csv',default=None,type = str, required=True) # csv file name to save
+    args = parser.parse_args()
+    csv_path = args.csv_path
+    save_path = args.save_path
+    csv_name = args.save_csv
+    if not os.path.exists(save_path+'/mel_spectrograms'):
+        os.makedirs(save_path+'/mel_spectrograms')
+    df = pd.read_csv(csv_path)
+    filename = get_filename(df['id'])
+    img,label = generate_spec(df['id'],filename,df['label'],save_path)
+    df12 = pd.DataFrame()
+    df12['id'] = img
+    df12['label'] = label
+    df12.to_csv(save_path+'/'+csv_name,index=False)
+
+
+
