@@ -1,17 +1,21 @@
 import torch
-from torch import nn
-from autoencoder import Encoder, Decoder, cal
-from dataloader import dataloader
+import torch.nn as nn
+from CNN.Models.autoencoder import Encoder, Decoder, cal
+from CNN.Utility.dataloader import dataloader
 import pandas as pd
 import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-train_df = pd.read_csv("...")
-test_df = pd.read_csv("...")
+train_df = pd.read_csv("/home/ubuntu/capstone/Data/age_train.csv")
+train_df = train_df[["Age_by_decade","Image_file_path"]]
+train_df.columns=["label","id"]
 
-train_loader, test_loader = dataloader(train_df, test_df, OUTPUTS_a = 6, BATCH_SIZE = 64, IMAGE_SIZE=128)
-#xdf_dset, xdf_dset_test, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128
+test_df = pd.read_csv("/home/ubuntu/capstone/Data/age_test.csv")
+test_df = test_df[["Age_by_decade","Image_file_path"]]
+test_df.columns=["label","id"]
+
+train_loader= dataloader(train_df, OUTPUTS_a = 5, BATCH_SIZE = 64, IMAGE_SIZE=128)
 
 batch_size = 64
 epochs = 5
@@ -24,7 +28,7 @@ jj, kk = cal(IMAGE_SIZE, num_layers)
 encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 decoder = Decoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 
-PATH_SAVE = "/home/ubuntu/capstone/Models/Saved_Models/"
+PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 encoder.load_state_dict(torch.load(PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers)))
 decoder.load_state_dict(torch.load(PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers)))
 
@@ -36,11 +40,11 @@ decoder.load_state_dict(torch.load(PATH_SAVE + 'decoder.{}_layers.pt'.format(num
 print("Starting Autoencoder...")
 
 #optimizer = torch.optim.AdamW(params_to_optimize, lr=lr)
-criterion = nn.MSEloss()
+criterion = nn.MSELoss()
 
 for epoch in range(epochs):
-    encoder.train()
-    decoder.train()
+    encoder.eval()
+    decoder.eval()
     loss = []
     for batch_features, label in train_loader:
         batch_features = batch_features.to(device)
@@ -54,4 +58,3 @@ for epoch in range(epochs):
     losses = np.mean(loss)
 
     print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, losses))
-
