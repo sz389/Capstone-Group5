@@ -43,6 +43,22 @@ def save_spectrogram(spec,file,path, aspect='auto', xmax=None):
       path+'/' + file + ".jpg",
       bbox_inches='tight', pad_inches=0)
   return path+'/'+file + ".jpg"
+
+def save_spectrogram_gui(spec,file,path, aspect='auto', xmax=None):
+  fig, axs = plt.subplots(1, 1)
+  im = axs.imshow(librosa.power_to_db(spec), origin='lower', aspect=aspect)
+  if xmax:
+    axs.set_xlim((0, xmax))
+  axs.get_xaxis().set_visible(False)
+  axs.get_yaxis().set_visible(False)
+  plt.axis('off')
+  plt.tight_layout()
+  # plt.show(block=False)
+  plt.savefig(
+      path+'/' + file + ".jpg",
+      bbox_inches='tight', pad_inches=0)
+  return path+'/'+file + ".jpg",fig
+
 def generate_spec(path_column,file_name_column,label_column,save_path):
     # wav_name_list =[]
     # origin_list = []

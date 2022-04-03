@@ -241,3 +241,4 @@ def combine_and_evaluate(cnn,model_path,test_loader,xdf_dset_test,class_names):
     f1 = f1_score(pred_result['label_num'], pred_result['prediction'])
     print(f'final f1 score:{f1}')
     print(f'Accuracy: {accuracy_score(pred_result.label_num, pred_result.prediction)}')
+    pred_result.to_csv('result.csv',index=False)
