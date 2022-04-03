@@ -2,16 +2,21 @@ import os
 import numpy as np
 import torch
 import torch.nn as nn
-from autoencoder import Encoder, Decoder, cal
-from dataloader import dataloader
+from CNN.Models.autoencoder import Encoder, Decoder, cal
+from CNN.Utility.dataloader import dataloader
 import pandas as pd
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-train_df = pd.read_csv("...")
-test_df = pd.read_csv("...")
+train_df = pd.read_csv("/home/ubuntu/capstone/Data/age_train.csv")
+train_df = train_df[["Age_by_decade","Image_file_path"]]
+train_df.columns=["label","id"]
 
-train_loader, test_loader = dataloader(train_df, test_df, OUTPUTS_a = 6, BATCH_SIZE = 64, IMAGE_SIZE=128)
+test_df = pd.read_csv("/home/ubuntu/capstone/Data/age_test.csv")
+test_df = test_df[["Age_by_decade","Image_file_path"]]
+test_df.columns=["label","id"]
+
+train_loader = dataloader(train_df, OUTPUTS_a = 5, BATCH_SIZE = 64, IMAGE_SIZE=128)
 #xdf_dset, xdf_dset_test, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128
 
 batch_size = 64
@@ -55,3 +60,5 @@ for epoch in range(epochs):
 PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 torch.save(encoder.state_dict(), PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers))
 torch.save(decoder.state_dict(), PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers))
+
+
