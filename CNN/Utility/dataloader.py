@@ -8,7 +8,7 @@ class Dataset(data.Dataset):
     From : https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
     '''
 
-    def __init__(self, df, transform, IMAGE_SIZE, OUTPUTS_a):
+    def __init__(self, df, OUTPUTS_a, transform=None, IMAGE_SIZE=128):
         self.df = df
         self.transform = transform
         self.IMAGE_SIZE = IMAGE_SIZE
@@ -31,15 +31,11 @@ class Dataset(data.Dataset):
         X = torch.reshape(X, (3, self.IMAGE_SIZE, self.IMAGE_SIZE))
         return X, y
 
-def dataloader(xdf_dset, xdf_dset_test, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128):
+def dataloader(xdf_dset, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128,shuffle=True):
 
     params = {'batch_size': BATCH_SIZE,
-              'shuffle': True}
-    training_set = Dataset(xdf_dset, OUTPUTS_a, BATCH_SIZE, IMAGE_SIZE, transform=None)
+              'shuffle':shuffle}
+    training_set = Dataset(xdf_dset, OUTPUTS_a,IMAGE_SIZE= IMAGE_SIZE, transform=None)
     training_generator = data.DataLoader(training_set, **params)
-    params = {'batch_size': BATCH_SIZE,
-              'shuffle': True}
-    test_set = Dataset(xdf_dset_test,OUTPUTS_a, BATCH_SIZE, IMAGE_SIZE, transform=None)
-    test_generator = data.DataLoader(test_set, **params)
 
-    return training_generator, test_generator
+    return training_generator
