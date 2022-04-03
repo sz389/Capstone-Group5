@@ -33,19 +33,17 @@ class Encoder(nn.Module):
         x = self.encoder_lin(y) #output: [64, 64]
         return x #return: [64, 64]
 
-def cal(max_sent):
+def cal(image_size, layers):
     kernel_size = (4,4); padding = (0,0); dilate = (1,1); maxpool = (1,1); stride = (2,2)
 
-    jj = np.ceil(((max_sent + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((max_sent + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+    for i in range(layers):
+        if i == 0:
+            jj = np.ceil(((image_size + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+            kk = np.ceil(((image_size + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
 
-
-    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
-
-
-    jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0]- 1)) / (maxpool[0] * stride[0]))
-    kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
+        else:
+            jj = np.ceil(((jj + 2 * padding[0]) - (dilate[0]) * (kernel_size[0] - 1)) / (maxpool[0] * stride[0]))
+            kk = np.ceil(((kk + 2 * padding[1]) - (dilate[1]) * (kernel_size[1] - 1)) / (maxpool[1] * stride[1]))
 
     return int(jj) ,int(kk)
 
