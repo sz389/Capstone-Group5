@@ -80,13 +80,12 @@ class Decoder(nn.Module):
         return x #return: [64, 3, 128, 128] #
 
 class Classifier(nn.Module):
-    def __init__(self, encoder):
-        OUTPUTS_a = 6; encoded_space_dim = 64; jj=14; kk=14;
+    def __init__(self, encoder, encoded_space_dim, OUTPUTS_a):
         super().__init__()
-        self.encoder = encoder(encoded_space_dim, jj, kk)
-        self.layer = nn.Linear(encoded_space_dim, OUTPUTS_a)
+        self.encoder = encoder
+        self.classifier = nn.Linear(encoded_space_dim, OUTPUTS_a)
     def forward(self, x):
         x = self.encoder(x)
-        x = self.layer(x)
+        x = self.classifier(x)
         return x
 
