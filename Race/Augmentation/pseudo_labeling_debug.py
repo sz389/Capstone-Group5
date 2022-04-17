@@ -6,6 +6,7 @@ from torchvision import datasets, transforms
 from torch import nn
 import torch.nn.functional as F
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 torch.manual_seed(42)
 np.random.seed(42)
@@ -15,8 +16,8 @@ torch.backends.cudnn.benchmark = False
 #Read in labeled data, split into audio and label, split into train and test
 import pandas as pd
 
-UNLABELED_BS = 8
-TRAIN_BS = 32
+UNLABELED_BS = 26
+TRAIN_BS = 12
 TEST_BS = 1024
 
 num_train_samples = 1000
@@ -33,17 +34,21 @@ x_test = pd.read_csv(csv_path + 'mnist_test.csv')
 y_test = x_test['label']
 x_test.drop(['label'], inplace = True, axis = 1)
 
-#For the train set, make sure there are equal class sizes
-x_train, x_unlabeled = x[y.values == 0].values[:samples_per_class], x[y.values == 0].values[samples_per_class:unlabeled_samples_per_class]
-y_train = y[y.values == 0].values[:samples_per_class]
+# unlabaled_samples_per_class = 100
+# #For the train set, make sure there are equal class sizes
+# x_train, x_unlabeled = x[y.values == 0].values[:unlabaled_samples_per_class], x[y.values == 0].values[samples_per_class:unlabeled_samples_per_class]
+# y_train = y[y.values == 0].values[:unlabaled_samples_per_class]
+#
+# for i in range(1, 10):
+#     x_train = np.concatenate([x_train, x[y.values == i].values[:unlabaled_samples_per_class]], axis=0)
+#     y_train = np.concatenate([y_train, y[y.values == i].values[:unlabaled_samples_per_class]], axis=0)
+#
+#     x_unlabeled = np.concatenate([x_unlabeled, x[y.values == i].values[samples_per_class:unlabaled_samples_per_class]], axis=0)
+#     unlabaled_samples_per_class = unlabaled_samples_per_class + 100
 
-unlabaled_samples_per_class = 100
-for i in range(1, 10):
-    x_train = np.concatenate([x_train, x[y.values == i].values[:samples_per_class]], axis=0)
-    y_train = np.concatenate([y_train, y[y.values == i].values[:samples_per_class]], axis=0)
 
-    x_unlabeled = np.concatenate([x_unlabeled, x[y.values == i].values[samples_per_class:unlabaled_samples_per_class]], axis=0)
-    unlabaled_samples_per_class = unlabaled_samples_per_class + 50
+# split original train data into (20,000: 40,000)
+x_train, x_unlabeled,y_train, y_unlabeled = train_test_split(x,y, train_size=1000, test_size=9000, shuffle=True, random_state=42)
 
 #Dataloader - convert to tensors then put through dataloader
 from sklearn.preprocessing import Normalizer
@@ -55,6 +60,7 @@ x_test = normalizer.transform(x_test.values)
 # x_test = x_test.values
 
 x_train = torch.from_numpy(x_train).type(torch.FloatTensor)
+y_train = pd.Series.to_numpy(y_train)
 y_train = torch.from_numpy(y_train).type(torch.LongTensor)
 
 x_test = torch.from_numpy(x_test).type(torch.FloatTensor)
@@ -105,18 +111,17 @@ def evaluate(model, test_loader):
             data = data.cuda()
             output = model(data)
             predicted = torch.max(output,1)[1]
-            print(predicted)
+            #print(predicted)
             correct += (predicted == labels.cuda()).sum()
             loss += F.nll_loss(output, labels.cuda()).item()
 
     return (float(correct)/len(test)) *100, (loss/len(test_loader))
 
-net.load_state_dict(torch.load("/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights"))
+net.load_state_dict(torch.load("/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_random_split_1_9"))
 
 T1 = 100
 T2 = 700
 af = 1
-
 
 def alpha_weight(epoch):
     if epoch < T1:
@@ -125,7 +130,6 @@ def alpha_weight(epoch):
         return af
     else:
         return ((epoch - T1) / (T2 - T1)) * af
-
 
 # Concept from : https://github.com/peimengsui/semi_supervised_mnist
 
@@ -142,7 +146,7 @@ test_loss_log = []
 
 def semisup_train(model, train_loader, unlabeled_loader, test_loader):
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
-    EPOCHS = 2
+    EPOCHS = 150
 
     # Instead of using current epoch we use a "step" variable to calculate alpha_weight
     # This helps the model converge faster
