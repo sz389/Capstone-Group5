@@ -32,7 +32,6 @@ class Dataset(data.Dataset):
         X = torch.reshape(X, (3, self.IMAGE_SIZE, self.IMAGE_SIZE))/255
         return X, y
 
-
 def dataloader(xdf_dset, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128,shuffle=True):
 
     params = {'batch_size': BATCH_SIZE,
@@ -42,4 +41,33 @@ def dataloader(xdf_dset, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128,shuffle=True
 
     return training_generator
 
+class UnlabeledDataset(data.Dataset):
+    '''
+    From : https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
+    '''
 
+    def __init__(self, df, transform=None, IMAGE_SIZE = 128):
+        self.df = df
+        self.transform = transform
+        self.IMAGE_SIZE = IMAGE_SIZE
+        #self.OUTPUTS_a = OUTPUTS_a
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, index):
+        file_name = self.df.id.iloc[index]
+        img = cv2.imread(file_name)
+        img = cv2.resize(img, (self.IMAGE_SIZE, self.IMAGE_SIZE))
+        X = torch.FloatTensor(img)
+        X = torch.reshape(X, (3, self.IMAGE_SIZE, self.IMAGE_SIZE))/255
+        return X
+
+def unlabeled_dataloader(xdf_dset,BATCH_SIZE = 64, IMAGE_SIZE=128,shuffle=True):
+
+    params = {'batch_size': BATCH_SIZE,
+              'shuffle':shuffle}
+    training_set = UnlabeledDataset(xdf_dset,IMAGE_SIZE= IMAGE_SIZE, transform=None)
+    training_generator = data.DataLoader(training_set, **params)
+
+    return training_generator
