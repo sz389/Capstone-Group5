@@ -10,7 +10,8 @@ import librosa.display
 import tqdm
 import soundfile as sf
 import argparse
-#from utility import get_filename
+sys.path.insert(1, '/home/ubuntu/capstone/CNN')
+from Utility.utility import manual_label_encoder, get_model_params, compute_metrics, get_filename
 #%%
 def melspec_librosa(x,sample_rate = 16000,
     n_fft = 1024,
