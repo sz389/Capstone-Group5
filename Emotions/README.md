@@ -5,7 +5,14 @@
 Emotion Classification for this project will consist of interpreting audio files in which sentences are read in an angry, happy, sad, neutral, disgusted or fear. The notebook in the code folder is written in Python and uses a transformer called Wav2Vec2 with a classification head to train a dataset. The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. The data comes from this repository: https://github.com/CheyneyComputerScience/CREMA-D
 
 1. Follow the instructions on CREMA-D Github README to access the AudioWAV folder to retrieve all the audio files
-2. Using the CREMA-D_nopath.csv file along with the AudioWAV folder. Run
+2. Using the CREMA-D_nopath.csv file along with the AudioWAV folder
+3. Using the resulting CSV file with the path, run mel_spectrogram.py to generate Mel Spectrograms inside another folder.
+    - 
+
+
+### Generating Mel Spectrograms
+
+
 
 
 
