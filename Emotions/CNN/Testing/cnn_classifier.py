@@ -10,7 +10,6 @@ import torch as nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-#emotion
 csv_path = '/home/ubuntu/capstone/Data/'
 train_df = pd.read_csv(csv_path + "emotion_train.csv")
 train_df = train_df[['emotion', "Image_file_path"]]
@@ -40,7 +39,6 @@ OUTPUTS_a = len(classes)
 
 jj, kk = cal(IMAGE_SIZE, num_layers)
 encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
-#decoder = Decoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 
 PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 
