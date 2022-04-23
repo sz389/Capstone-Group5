@@ -44,14 +44,8 @@ PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 encoder.load_state_dict(torch.load(PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers)))
 decoder.load_state_dict(torch.load(PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers)))
 
-# params_to_optimize = [
-#     {'params': encoder.parameters()},
-#     {'params': decoder.parameters()}
-# ]
-
 print("Starting Autoencoder...")
 
-#optimizer = torch.optim.AdamW(params_to_optimize, lr=lr)
 criterion = nn.MSELoss()
 
 for epoch in range(epochs):
