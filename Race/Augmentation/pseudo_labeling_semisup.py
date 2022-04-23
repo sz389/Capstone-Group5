@@ -20,10 +20,6 @@ np.random.seed(42)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-UNLABELED_BS = 128
-TRAIN_BS = 128
-TEST_BS = 1024
-
 csv_path = "/home/ubuntu/capstone/Data/"
 train_df = pd.read_csv(csv_path + "race_train.csv")
 train_df = train_df[['Race', "Image_file_path"]]
@@ -88,16 +84,23 @@ def evaluate(model, test_loader):
         loss += criterion(outputs, labels).item()
         f1 = f1_score(y_true, y_pred, average='weighted')
 
+    cf_matrix = confusion_matrix(y_true, y_pred)
+    df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix) * 2, index=[i for i in classes],
+                         columns=[i for i in classes])
+
+    print('Confusion matrix: ')
+    print(df_cm)
+
     #return (float(correct)/len(test_df)) * 100, (loss/len(test_loader))
     return f1 * 100, (loss/len(test_loader))
 
 net.load_state_dict(torch.load("/home/ubuntu/capstone/CNN/Models/Saved_Models/cnn_3_layers_race_with_val.pt"))
 
 T1 = 100
-T2 = 700
-af = 0.5
+T2 = 1200 # change with epoch value
+af = 0.30 # correlates to confidence level in unlabeled data
 
-def alpha_weight(epoch):
+def alpha_weight(epoch): #150 epochs, 9 steps per epoch, after 150 epochs, step = 150 * 9
     if epoch < T1:
         return 0.0
     elif epoch > T2:
@@ -122,16 +125,16 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
     EPOCHS = 150
-
+    met_best = 0
     # Instead of using current epoch we use a "step" variable to calculate alpha_weight
     # This helps the model converge faster
     step = 100
-    model.eval()
+    # model.eval()
     for epoch in tqdm(range(EPOCHS)):
         for batch_idx, x_unlabeled in enumerate(unlabeled_loader):
 
             # Forward Pass to get the pseudo labels
-            x_unlabeled = x_unlabeled.to('cuda')
+            x_unlabeled = Variable(x_unlabeled).to('cuda')
             model.eval() #evaluate model that was loaded in
             output_unlabeled = model(x_unlabeled)
             _, pseudo_labeled = torch.max(output_unlabeled, 1)
@@ -146,38 +149,38 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
             unlabeled_loss.backward()
             optimizer.step()
 
-            # For every 50 batches train one epoch on labeled data
-            if batch_idx % 50 == 0:
+            # For every 10 batches train one epoch on labeled data
+            if batch_idx % 10 == 0: #9 times every epoch
 
                 # Normal training procedure
                 for batch_idx, (X_batch, y_batch) in enumerate(train_loader):
-                    X_batch = Variable(X_batch)
-                    y_batch = Variable(y_batch)
-                    X_batch = X_batch.to('cuda')
-                    y_batch = y_batch.to('cuda')
-                    #model.train()
-                    optimizer.zero_grad()
+                    X_batch, y_batch = Variable(X_batch).to("cuda"), Variable(y_batch).to("cuda")
                     output = model(X_batch)
-                    #predicted = torch.max(output, 1)[1]
-                    #y_batch_pred = torch.max(y_batch, 1)[1]
-                    #labeled_loss = F.nll_loss(predicted, y_batch_pred)
                     labeled_loss = criterion(output, y_batch)
+
+                    optimizer.zero_grad()
                     labeled_loss.backward()
                     optimizer.step()
 
                 # Now we increment step by 1
                 step += 1
 
-
         val_acc, val_loss = evaluate(model, val_loader)
         print('Epoch: {} : Alpha Weight : {:.5f} | Val Acc : {:.5f} | Val Loss : {:.3f} '.format(epoch,
                                                                                                    alpha_weight(step),
                                                                                                    val_acc, val_loss))
+
+        if val_acc > met_best:
+            #patience = 15
+            met_best = val_acc
+            torch.save(obj=net.state_dict(), f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race")
+
         model.train()
 
+#if name == "main"
 
 semisup_train(net, train_loader, unlabeled_loader, val_loader)
 
+net.load_state_dict(torch.load(f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race"))
 test_acc, test_loss = evaluate(net, test_loader)
 print('Test Acc : {:.5f} | Test Loss : {:.3f} '.format(test_acc, test_loss))
-
