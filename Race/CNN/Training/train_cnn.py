@@ -56,5 +56,3 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
 model_name = "vgg16_race_with_val.pt"
 train_and_test(cnn, train_loader, val_loader, classes, model_name, epochs, batch_size, learning_rate)
 evaluate_best_model(cnn, test_loader, classes, model_name)
-
-get
