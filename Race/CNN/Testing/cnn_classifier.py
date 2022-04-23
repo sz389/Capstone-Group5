@@ -10,27 +10,8 @@ import torch as nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-#emotion
 csv_path = '/home/ubuntu/capstone/Data/'
-# train_df = pd.read_csv(csv_path + "emotion_train.csv")
-# train_df = train_df[['emotion', "Image_file_path"]]
-# train_df.columns=['label','id']
-#
-# train_df['label'] = manual_label_encoder(train_df['label'],'emotion')
-#
-# val_df = pd.read_csv(csv_path + "emotion_val.csv")
-# val_df = val_df[['emotion', "Image_file_path"]]
-# val_df.columns=['label','id']
-#
-# val_df['label'] = manual_label_encoder(val_df['label'],'emotion')
-#
-# test_df = pd.read_csv(csv_path + "emotion_test.csv")
-# test_df = test_df[['emotion', "Image_file_path"]]
-# test_df.columns=['label','id']
-#
-# test_df['label'] = manual_label_encoder(test_df['label'],'emotion')
-#
-# classes = ['ANG', 'DIS', 'FEA', 'HAP', 'NEU', 'SAD']
+
 train_df = pd.read_csv(csv_path + "race_train.csv")
 train_df = train_df[['Race', "Image_file_path"]]
 train_df.columns=['label','id']
@@ -65,7 +46,6 @@ test_loader = dataloader(test_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size
 
 jj, kk = cal(IMAGE_SIZE, num_layers)
 encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
-#decoder = Decoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 
 PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
 
