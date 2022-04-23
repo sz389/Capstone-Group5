@@ -82,7 +82,8 @@ def evaluate(model, test_loader):
         y_true.extend(labels)
         correct += (predicted == labels).sum()
         loss += criterion(outputs, labels).item()
-        f1 = f1_score(y_true, y_pred, average='weighted')
+    f1 = f1_score(y_true, y_pred, average='weighted')
+    acc = accuracy_score(y_true, y_pred)
 
     cf_matrix = confusion_matrix(y_true, y_pred)
     df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix) * 2, index=[i for i in classes],
@@ -92,13 +93,13 @@ def evaluate(model, test_loader):
     print(df_cm)
 
     #return (float(correct)/len(test_df)) * 100, (loss/len(test_loader))
-    return f1 * 100, (loss/len(test_loader))
+    return acc * 100, f1 * 100, (loss/len(test_loader))
 
 net.load_state_dict(torch.load("/home/ubuntu/capstone/CNN/Models/Saved_Models/cnn_3_layers_race_with_val.pt"))
 
 T1 = 100
-T2 = 1200 # change with epoch value
-af = 0.30 # correlates to confidence level in unlabeled data
+T2 = 700 # change with epoch value
+af = 0.50 # correlates to confidence level in unlabeled data
 
 def alpha_weight(epoch): #150 epochs, 9 steps per epoch, after 150 epochs, step = 150 * 9
     if epoch < T1:
@@ -126,6 +127,7 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
     criterion = nn.CrossEntropyLoss()
     EPOCHS = 150
     met_best = 0
+    patience = 20
     # Instead of using current epoch we use a "step" variable to calculate alpha_weight
     # This helps the model converge faster
     step = 100
@@ -150,7 +152,7 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
             optimizer.step()
 
             # For every 10 batches train one epoch on labeled data
-            if batch_idx % 10 == 0: #9 times every epoch
+            if batch_idx % 25 == 0: #4 times every epoch
 
                 # Normal training procedure
                 for batch_idx, (X_batch, y_batch) in enumerate(train_loader):
@@ -165,22 +167,23 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
                 # Now we increment step by 1
                 step += 1
 
-        val_acc, val_loss = evaluate(model, val_loader)
-        print('Epoch: {} : Alpha Weight : {:.5f} | Val Acc : {:.5f} | Val Loss : {:.3f} '.format(epoch,
+        val_acc, val_f1, val_loss = evaluate(model, val_loader)
+        print('Epoch: {} : Alpha Weight : {:.5f} | Val Acc: {:.5f} | Val F1 : {:.5f} | Val Loss : {:.3f} '.format(epoch,
                                                                                                    alpha_weight(step),
-                                                                                                   val_acc, val_loss))
-
+                                                                                                   val_acc, val_f1, val_loss))
+        patience = patience - 1
         if val_acc > met_best:
-            #patience = 15
+            patience = 20
             met_best = val_acc
-            torch.save(obj=net.state_dict(), f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race")
+            torch.save(obj=net.state_dict(), f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race_ifbatch25")
 
         model.train()
 
-#if name == "main"
-
 semisup_train(net, train_loader, unlabeled_loader, val_loader)
 
-net.load_state_dict(torch.load(f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race"))
-test_acc, test_loss = evaluate(net, test_loader)
-print('Test Acc : {:.5f} | Test Loss : {:.3f} '.format(test_acc, test_loss))
+net.load_state_dict(torch.load(f="/home/ubuntu/capstone/CNN/Models/Saved_Models/supervised_weights_race_ifbatch25"))
+
+print("-----------Final Scores------------")
+print()
+test_acc, test_f1, test_loss = evaluate(net, test_loader)
+print('Test Acc : {:.5f} | Test F1 : {:.5f} | Test Loss : {:.3f} '.format(test_acc, test_f1, test_loss))
