@@ -3,8 +3,6 @@ from datasets import load_dataset, load_metric
 import numpy as np
 import pandas as pd
 from transformers import AutoModelForAudioClassification, TrainingArguments, Trainer
-
-
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoFeatureExtractor
@@ -36,23 +34,9 @@ class dataset(data.Dataset):
         # Denotes the total number of samples'
         return len(self.df)
     def __getitem__(self, index):
-        # Generates one sample of data'
-        # Select sample
-        # Load data and get label
         y=self.df.label_num.iloc[index]
-        # labels_ohe = np.zeros(OUTPUTS_a)
-        # for idx, label in enumerate(range(OUTPUTS_a)):
-        #     if label == y:
-        #         labels_ohe[idx] = 1
-        # y = torch.FloatTensor(labels_ohe)
         file_name = self.df.id.iloc[index]
         X,sr = librosa.load(file_name,sr=feature_extractor.sampling_rate)
-        # X = feature_extractor(
-        #     X,
-        #     # sampling_rate=feature_extractor.sampling_rate,
-        #     # max_length=int(feature_extractor.sampling_rate * max_duration),
-        #     # truncation=True,
-        # )
         dict = {'input_values':X,'label':y}
         return dict
 def compute_metrics(eval_pred):
