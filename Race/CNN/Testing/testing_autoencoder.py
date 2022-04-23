@@ -13,18 +13,17 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #emotion
 csv_path = '/home/ubuntu/capstone/Data/'
-train_df = pd.read_csv(csv_path + "emotion_train.csv")
+train_df = pd.read_csv(csv_path + "race_train.csv")
 train_df = train_df[['emotion', "Image_file_path"]]
 train_df.columns=['label','id']
 
-train_df['label'] = manual_label_encoder(train_df['label'],'emotion')
+train_df['label'] = manual_label_encoder(train_df['label'],'race')
 
-
-test_df = pd.read_csv(csv_path + "emotion_test.csv")
-test_df = test_df[['emotion', "Image_file_path"]]
+test_df = pd.read_csv(csv_path + "race_test.csv")
+test_df = test_df[['race', "Image_file_path"]]
 test_df.columns=['label','id']
 
-test_df['label'] = manual_label_encoder(test_df['label'],'emotion')
+test_df['label'] = manual_label_encoder(test_df['label'],'race')
 
 batch_size = 64
 epochs = 5
