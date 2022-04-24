@@ -24,121 +24,212 @@ from torch.utils import data
 import cv2
 import matplotlib.pyplot as plt
 from scipy import signal
+import torch.nn.functional as nnf
+from datasets import load_dataset, load_metric
+from transformers import AutoModelForAudioClassification, TrainingArguments, Trainer, AutoFeatureExtractor
 
+from generate_mel_spectrograms import save_spectrogram_gui,melspec_librosa
 import gradio as gr
+from CNN.Models.cnn import CNN,pretrained_model, CNN9
 #%%
-
-def spectrogram(audio):
-    sr, data = audio
-    if len(data.shape) == 2:
-        data = np.mean(data, axis=0)
-    frequencies, times, spectrogram_data = signal.spectrogram(
-        data, sr, window="hamming"
-    )
-    plt.pcolormesh(times, frequencies, np.log10(spectrogram_data))
-    return plt
-
-sample_rate = 16000
-n_fft = 1024
-win_length = None
-hop_length = 512
-n_mels = 180
-def melspec_librosa(x):
-    print(x)
-    x,sr = librosa.load(x,sr=16000)
-    return librosa.feature.melspectrogram(
-    y = x,
-    sr=sample_rate,
-    n_fft=n_fft,
-    hop_length=hop_length,
-    win_length=win_length,
-    center=True,
-    pad_mode="reflect",
-    power=2.0,
-    n_mels=n_mels,
-    norm='slaney',
-    htk=True,
-)
-def save_spectrogram(spec, aspect='auto', xmax=None):
-  fig, axs = plt.subplots(1, 1)
-  im = axs.imshow(librosa.power_to_db(melspec_librosa(spec)), origin='lower', aspect=aspect)
-  if xmax:
-    axs.set_xlim((0, xmax))
-  axs.get_xaxis().set_visible(False)
-  axs.get_yaxis().set_visible(False)
-  plt.axis('off')
-  plt.tight_layout()
-  # fig.canvas.draw()
-  # plt.show(block=False)
-  plt.savefig(
-      csv_path+ '/sample'+ ".jpg",
-      bbox_inches='tight', pad_inches=0)
-  # data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-  # data = data.reshape(fig.carnvas.get_width_height()[::-1] + (3,))
-  return fig
-
-#%%
-os.chdir('..')
-csv_path = os.getcwd()+'/26-29_09_2017_KCL/'
-device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-#%%
-def define_model(category):
-    model_path = csv_path +'saved_cnn/'
-    if category=='parkinson':
+def get_arg(category):
+    if category == 'parkinson':
+        class_names = ['hc','pd']
         IMAGE_SIZE = 128
-        class_names = ['PD', 'HC']
-        model_name = 'efficientnet_b2'
-    # model = models.resnet18(pretrained=True)
-    # model = models.resnet34(pretrained=True)
-    # model = models.vgg16(pretrained=True)
-        OUTPUTS_a = len(class_names)
-        model = models.efficientnet_b2(pretrained=True)
-        # model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
-        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,OUTPUTS_a)
-        cnn1 = model.to(device)
-        cnn1.load_state_dict(torch.load(model_path+"model_{}.pt".format(model_name)))
-    else:
-        model_name = 'efficientnet_b2'
-        # model = models.resnet18(pretrained=True)
-        # model = models.resnet34(pretrained=True)
-        # model = models.vgg16(pretrained=True)
-        OUTPUTS_a = len(class_names)
-        # cnn = CNN()
-        model = models.efficientnet_b2(pretrained=True)
-        # model.fc = nn.Linear(model.fc.in_features, OUTPUTS_a)
-        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features, OUTPUTS_a)
-        cnn1 = model.to(device)
-        cnn1.load_state_dict(torch.load(model_path + "model_{}.pt".format(model_name)))
-    return IMAGE_SIZE,cnn1
+        model = pretrained_model('resnet18',2)
+        #model = CNN9(2)
+        csv_path = "/home/ubuntu/capstone/Data"
+        #model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/cnn9_parkinson.pt'
+        model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/resnet18_disease.pt'
+        n_mels = 180; n_fft = 1024
+        return class_names, IMAGE_SIZE, model, csv_path, model_path, n_mels,n_fft
 
-# file = xdf_dset['id'][150]
-# label = xdf_dset['label'][150]
+    elif category =='sex':
+        class_names = ['male', 'female']
+        IMAGE_SIZE = 128
+        model = pretrained_model('resnet18', 2)
+        csv_path = "/home/ubuntu/capstone/Data"
+        model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/resnet18_sex_4_9.pt'
+        n_mels = 128; n_fft = 1024
+        return class_names, IMAGE_SIZE, model, csv_path, model_path, n_mels,n_fft
+
+    elif category =='age':
+        class_names =  [ '<30s', '30s', '40s', '50s','>60s']
+        IMAGE_SIZE = 128
+        model = pretrained_model('resnet18', 5)
+        csv_path = "/home/ubuntu/capstone/Data"
+        model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/resnet18_age_4_9.pt'
+        n_mels = 128; n_fft = 1024
+        return class_names, IMAGE_SIZE, model, csv_path, model_path, n_mels,n_fft
+
+    elif category =='emotion':
+        class_names =  ['ANG', 'DIS', 'FEA', 'HAP', 'NEU', 'SAD']
+        IMAGE_SIZE = 128
+        model = CNN9(6)
+        csv_path = "/home/ubuntu/capstone/Data"
+        model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/CNN9_emotion.pt'
+        n_mels = 160; n_fft = 1536
+        return class_names, IMAGE_SIZE, model, csv_path, model_path, n_mels, n_fft
+
+    elif category =='accent':
+        class_names =  ['arabic', 'english', 'french', 'mandarin','spanish']
+        IMAGE_SIZE = 128
+        model = pretrained_model('resnet34', 5)
+        csv_path = "/home/ubuntu/capstone/Data"
+        model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/resnet34_accent.pt'
+        n_mels = 128; n_fft = 1024
+        return class_names, IMAGE_SIZE, model, csv_path, model_path,n_mels,n_fft
+
+    class_names = ['male', 'female']
+    IMAGE_SIZE = 128
+    model = pretrained_model('resnet18', 2)
+    csv_path = "/home/ubuntu/capstone/Data"
+    model_path = "/home/ubuntu/capstone/CNN/Models/Saved_Models/resnet18_sex_4_9.pt"
+    n_mels = 128; n_fft = 1024
+    return class_names, IMAGE_SIZE, model, csv_path, model_path,n_mels,n_fft
+
+class SimpleDataset:
+    def __init__(self, audio):
+        self.audio = audio
+
+    def __len__(self):
+        return 1
+
+    def __getitem__(self,idx):
+        return {'input_values':self.audio}
+
+def get_arg_trans(category):
+    def compute_metrics(eval_pred):
+        """Computes accuracy on a batch of predictions"""
+        predictions = np.argmax(eval_pred.predictions, axis=1)
+        return metric.compute(predictions=predictions, references=eval_pred.label_ids)
+    metric = load_metric("accuracy", 'f1')
+    IMAGE_SIZE = 128
+    n_mels=180
+    """ """
+    if category == 'parkinson':
+        class_names = ['hc', 'pd']
+        model_path = "/home/ubuntu/Capstone/saved_model/"
+        best_model_path = model_path + "/wav2vec2-base-finetuned-ks/checkpoint-150/"
+        model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
+        feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
+    """" """
+    model_checkpoint = "facebook/wav2vec2-base"
+    model_name = model_checkpoint.split("/")[-1]
+
+    args = TrainingArguments(
+        model_path + f"{model_name}-finetuned-ks1",
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        learning_rate=3e-5,
+        # per_device_train_batch_size=batch_size,
+        gradient_accumulation_steps=4,
+        # per_device_eval_batch_size=batch_size,
+        num_train_epochs=5,
+        warmup_ratio=0.1,
+        logging_steps=10,
+        load_best_model_at_end=True,
+        metric_for_best_model="accuracy",
+    )
+    trainer = Trainer(
+        model1,
+        args,
+        tokenizer=feature_extractor,
+        compute_metrics=compute_metrics
+    )
+    return class_names,IMAGE_SIZE,trainer,n_mels
+def predict(file,category,choose_model):
+    x, sr = librosa.load(file, sr=16000)
+    csv_path = "/home/ubuntu/Capstone/data/"
+    # IMAGE_SIZE, cnn = define_model(category)
+    if choose_model == 'CNN':
+        class_names, IMAGE_SIZE, model, csv_path,model_path,n_mels = get_arg(category)
+        model.load_state_dict(torch.load(f=model_path))
+        device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+        cnn = model.to(device)
+        cnn.eval()
+        spec = melspec_librosa(x, sample_rate=16000,
+                               n_fft=1024,
+                               win_length=None,
+                               hop_length=512,
+                               n_mels=n_mels)
+        fig, pic = save_spectrogram_gui(spec, 'test', csv_path)
+        img = cv2.imread(fig)
+        img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
+        X = torch.FloatTensor(img)
+        X = torch.reshape(X, (3, IMAGE_SIZE, IMAGE_SIZE)) / 255
+        X = torch.unsqueeze(X, 0)
+        images = Variable(X).to("cuda")
+        outputs = cnn(images).detach().to(torch.device('cpu'))
+        # print(outputs)
+        prob = nnf.softmax(outputs, dim=1)
+        _, predicted = torch.max(outputs.data, 1)
+        print(predicted)
+
+    if choose_model == 'Transformer':
+        class_names, IMAGE_SIZE, trainer, n_mels = get_arg_trans(category)
+        test_dataset = SimpleDataset(x)
+        predict = trainer.predict(test_dataset).predictions
+        print(f'prediction: {np.argmax(predict)}')
+        predict = torch.Tensor(predict)
+        prob = nnf.softmax(predict,dim=1)
+
+    spec = melspec_librosa(x, sample_rate=16000,
+                           n_fft=1024,
+                           win_length=None,
+                           hop_length=512,
+                           n_mels=n_mels)
+    fig, pic = save_spectrogram_gui(spec, 'test', csv_path)
+    top_p, top_class = prob.topk(len(class_names), dim=1)
+    text = ''
+    for i in range(len(class_names)):
+        temp = f'{class_names[top_class[0][i]]}:{top_p[0][i] * 100:.2f}%\n'
+        text = text + temp
+    return pic,text
 def predict(file,category):
-    IMAGE_SIZE, cnn = define_model(category)
+    x, sr = librosa.load(file, sr=16000)
+    # IMAGE_SIZE, cnn = define_model(category)
+    class_names, IMAGE_SIZE, model, csv_path,model_path,n_mels,n_fft = get_arg(category)
+    model.load_state_dict(torch.load(f=model_path))
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    cnn = model.to(device)
     cnn.eval()
-    fig = save_spectrogram(file)
-    file = csv_path+ '/sample'+ ".jpg"
-    img = cv2.imread(file)
-    # sigma = 0.155
-    # img = random_noise(img,var = sigma**2)
+    spec = melspec_librosa(x,sample_rate = 16000,
+    n_fft = n_fft,
+    win_length = None,
+    hop_length = 512,
+    n_mels = n_mels)
+    fig,pic = save_spectrogram_gui(spec,'test',csv_path)
+    img = cv2.imread(fig)
     img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
     X = torch.FloatTensor(img)
-    X = torch.reshape(X, (3, IMAGE_SIZE, IMAGE_SIZE))
+    X = torch.reshape(X, (3, IMAGE_SIZE, IMAGE_SIZE))/255
     X = torch.unsqueeze(X,0)
     images = Variable(X).to("cuda")
     outputs = cnn(images).detach().to(torch.device('cpu'))
     #print(outputs)
+    import torch.nn.functional as nnf
+    prob = nnf.softmax(outputs, dim=1)
+    top_p, top_class = prob.topk(len(class_names), dim=1)
     _, predicted = torch.max(outputs.data, 1)
     print(predicted)
-    # print(f'True label:{label}')
-    return fig,class_names[predicted]
-iface = gr.Interface(predict,
-                     inputs=[gr.inputs.Audio(source="upload",\
-                                                type="filepath", label=None, optional=False),
-                             gr.inputs.Radio(["sex", "emotion", "parkinson"]),],
-                     outputs=["plot",'text'],
-                     # outputs='text',
-                     )
+    # print(f'True label:{label}')=
+    text = ''
+    for i in range(len(class_names)):
+        temp = f'{class_names[top_class[0][i]]}:{top_p[0][i]*100:.2f}%\n'
+        text  = text+temp
+    return pic,text
+    # return pic,class_names[predicted]
+if __name__=='__main__':
+    iface = gr.Interface(predict,
+                         inputs=[gr.inputs.Audio(source="microphone", \
+                                                 type="filepath", label=None, optional=False),
+                                 gr.inputs.Radio(["sex","age", "emotion", 'accent', "parkinson"]),
+                                 gr.inputs.Radio(["CNN", "Transformer"]),
+                                 ],
+                         outputs=["plot", 'text'],
+                         # outputs='text',
+                         )#"upload" # "microphone"
 
-iface.test_launch()
-iface.launch(share=True)
+    iface.test_launch()
+    iface.launch(share=True)
