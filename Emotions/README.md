@@ -175,7 +175,7 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
 - _val_csv_: the validation csv file (default = {category}_val.csv)
 - _test_csv_: the test csv file (default = {category}_test.csv)
 - _unlabeled_csv_: the csv file for the unlabeled data
-- _epochs_: the number of epochs the model should run for (default = 30)
+- _epochs_: the number of epochs the model should run for (default = 150)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
