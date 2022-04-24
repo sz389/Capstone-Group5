@@ -32,9 +32,11 @@ if __name__ == '__main__':
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
-    train_df = args.train_csv
+    train_csv = args.train_csv
     PATH_SAVE = args.model_save_path
+    csv_load_path = args.csv_load_path
 
+    train_df = pd.read_csv(csv_load_path + train_csv)
     train_df = train_df[[category, "Image_file_path"]]
     train_df.columns = ['label', 'id']
 
