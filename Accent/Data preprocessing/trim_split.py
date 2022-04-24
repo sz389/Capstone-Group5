@@ -1,3 +1,5 @@
+# This file is used to split all audio files into separated 5 seconds chunks, and generate Mel spectrogram. 
+# All new generated audio files, and Mel spectrograms will be automatically saved. 
 #%%
 import numpy as np
 import pandas as pd
