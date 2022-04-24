@@ -5,9 +5,12 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
 from torchvision import models
+import sys
+sys.path.insert(1, '/home/ubuntu/capstone/CNN')
+from Models.autoencoder import cal
 
 class CNN(nn.Module):
-    def __init__(self, encoded_space_dim, jj, kk):
+    def __init__(self, encoded_space_dim, jj, kk, OUTPUTS_a):
         super().__init__()
         channels = 3 ; ch1 = 16 ; ch2 = 32 ; ch3 = 64
         kernel_size = (4, 4); padding = (0, 0) ; stride = (2, 2)
@@ -21,6 +24,7 @@ class CNN(nn.Module):
         #self.relu = nn.ReLU(True)
         self.flatten = nn.Flatten(start_dim=1)
         self.encoder_lin = nn.Sequential(nn.Linear(int(ch3 * jj * kk), 128),  nn.Linear(128, encoded_space_dim)) # nn.ReLU(True)
+        self.classifier = nn.Linear(encoded_space_dim, OUTPUTS_a)
 
     def forward(self, x):
         # input: [64, 3, 128, 128]
@@ -36,15 +40,14 @@ class CNN(nn.Module):
         x = torch.tanh(x)  # output: [64, 64, 14, 14]
         y = self.flatten(x) #output: [64, 12544] = [64, 64 * 14 * 14]
         x = self.encoder_lin(y) #output: [64, 64]
+        x = self.classifier(x)
         return x #return: [64, 64]
 
-
-
-def train_and_test(cnn, train_loader, test_loader, classes, model_name,
+def train_and_test(cnn, train_loader, val_loader, classes, model_name, model_path,
                    num_epochs = 10,
                    batch_size = 64,
-                   learning_rate = 1E-3,
-                   model_path = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"):
+                   learning_rate = 1E-3
+                   ):
 
 
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -53,7 +56,7 @@ def train_and_test(cnn, train_loader, test_loader, classes, model_name,
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
 
-    patience = 4
+    #patience = 15
     met_best = 0
 
     for epoch in range(num_epochs):
@@ -83,7 +86,7 @@ def train_and_test(cnn, train_loader, test_loader, classes, model_name,
         total = 0
         y_pred = []
         y_true = []
-        for images, labels in test_loader:
+        for images, labels in val_loader:
             images = Variable(images).to("cuda")
             outputs = cnn(images).detach().to(torch.device('cpu'))
             # print(outputs)
@@ -111,19 +114,19 @@ def train_and_test(cnn, train_loader, test_loader, classes, model_name,
         print('Accuracy: ')
         print(accuracy_score(y_true, y_pred))
 
-        patience = patience - 1
+        #patience = patience - 1
 
         if f1 > met_best:
-            patience = 4
+            #patience = 15
             met_best = f1
             torch.save(obj=cnn.state_dict(), f=model_path + f"{model_name}")
 
-        if patience == 0:
-            break
+        # if patience == 0:
+        #     break
 
 
 def evaluate_best_model(cnn, test_loader, classes, model_name,
-                       model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/'):
+                       model_path):
 
     cnn.load_state_dict(torch.load(f=model_path + model_name))
     cnn.eval().to('cuda')  # Change model to 'eval' mode (BN uses moving mean/var).
@@ -161,10 +164,11 @@ def evaluate_best_model(cnn, test_loader, classes, model_name,
     print(accuracy_score(y_true, y_pred))
 
 class add_linear(nn.Module):
-    def __init__(self, CNN, OUTPUTS_a):
+    def __init__(self, CNN, model_output, OUTPUTS_a):
         super().__init__()
         self.model = CNN
-        self.classifier = nn.Linear(256, OUTPUTS_a)
+        self.classifier = nn.Linear(model_output, OUTPUTS_a)
+
     def forward(self,x):
         x = self.model(x)
         x = self.classifier(x)
@@ -229,7 +233,6 @@ class CNN9(nn.Module):
 
         return self.linear(self.global_avg_pool(x).view(-1, 256))
 
-
 def pretrained_model(model_name,OUTPUTS_a):
     # mlb = MultiLabelBinarizer()
     # THRESHOLD = 0.5
@@ -245,7 +248,12 @@ def pretrained_model(model_name,OUTPUTS_a):
     elif model_name == "vgg16":
         model = models.vgg16(pretrained=True)
         model.classifier[-1] = nn.Linear(model.classifier[-1].in_features, OUTPUTS_a)
-    # elif model_name == "cnn":
-    #     model =
-    return model
+    elif model_name == "cnn9":
+        model = CNN9(OUTPUTS_a)
 
+    elif model_name == "cnn3":
+        d = 64; IMAGE_SIZE = 128; num_layers = 3
+        jj, kk = cal(IMAGE_SIZE, num_layers)
+        model = CNN(d, jj, kk, OUTPUTS_a)
+
+    return model
