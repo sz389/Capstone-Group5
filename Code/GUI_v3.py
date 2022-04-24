@@ -103,13 +103,14 @@ def get_arg_trans(category):
         """Computes accuracy on a batch of predictions"""
         predictions = np.argmax(eval_pred.predictions, axis=1)
         return metric.compute(predictions=predictions, references=eval_pred.label_ids)
+    
+    model_path = "/home/ubuntu/Capstone/saved_model/"
     metric = load_metric("accuracy", 'f1')
     IMAGE_SIZE = 128
     n_mels=180
     """ """
     if category == 'parkinson':
         class_names = ['hc', 'pd']
-        model_path = "/home/ubuntu/Capstone/saved_model/"
         best_model_path = model_path + "/wav2vec2-base-finetuned-ks/checkpoint-150/"
         model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
         feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
