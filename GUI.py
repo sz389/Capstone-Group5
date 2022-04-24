@@ -111,9 +111,10 @@ def get_arg_trans(category):
         class_names = ['hc', 'pd']
         model_path = "/home/ubuntu/Capstone/saved_model/"
         best_model_path = model_path + "/wav2vec2-base-finetuned-ks/checkpoint-150/"
-        model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
-        feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
     """" """
+    
+    model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
     model_checkpoint = "facebook/wav2vec2-base"
     model_name = model_checkpoint.split("/")[-1]
 
