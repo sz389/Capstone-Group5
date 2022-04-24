@@ -1,10 +1,11 @@
 #%%
 # This file is used to import data, add path column in the dataframe, and split data to train, validation, and test sets.
+# user would need to change the CSV path and audio path as needed in the code. 
 import pandas as pd
 csv_path = '/home/ubuntu/Capstone/'
 # read ORIGINAL audio files from csv
 columns = ['filename','native_language']
-df = pd.read_csv(csv_path+'New Accent_Archive_Clean.csv', usecols= columns)
+df = pd.read_csv(csv_path+'Accent_Archive_Clean.csv', usecols= columns)
 
 #%%
 # only use 5 labels
