@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import sys
+import pandas as pd
 sys.path.insert(1, '/home/ubuntu/capstone/CNN')
 from Models.cnn import CNN, train_and_test, evaluate_best_model, add_linear, pretrained_model, CNN9
 from Models.autoencoder import cal
@@ -31,22 +32,26 @@ if __name__ == '__main__':
     parser.add_argument("--model_save_path", default=None, type=str, required=True)
 
     epochs = args.epochs
+    csv_load_path = args.csv_load_path
     batch_size = args.batch_size
     learning_rate = args.learning_rate
-    train_df = args.train_csv
-    val_df = args.val_csv
-    test_df = args.test_csv
+    train_csv = args.train_csv
+    val_csv = args.val_csv
+    test_csv = args.test_csv
     model = args.model
     model_save_path = args.model_save_path
 
+    train_df = pd.read_csv(csv_load_path + train_csv)
     train_df = train_df[[category, "Image_file_path"]]
     train_df.columns=['label','id']
     train_df['label'] = manual_label_encoder(train_df['label'],category)
 
+    val_df = pd.read_csv(csv_load_path + val_csv)
     val_df = val_df[[category, "Image_file_path"]]
     val_df.columns=['label','id']
     val_df['label'] = manual_label_encoder(val_df['label'],category)
 
+    test_df = pd.read_csv(csv_load_path + test_csv)
     test_df = test_df[[category, "Image_file_path"]]
     test_df.columns=['label','id']
     test_df['label'] = manual_label_encoder(test_df['label'],category)
