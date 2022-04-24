@@ -9,7 +9,13 @@ Emotion Classification for this project will consist of interpreting audio files
 
 #### Example: 
 
-python3 data_preprocessing.py --csv_file "CREMA_no_path.csv" --csv_path "/home/ubuntu/capstone/Data/" --audio_path "/home/ubuntu/capstone/AudioWAV/" --image_path "/home/ubuntu/capstone/Data/Mel_Spectrograms/" --n_mels 1024 --hop_length 512 --n_fft 128 --category "Sex"
+python3 data_preprocessing.py --csv_file "CREMA_no_path.csv" 
+                              --csv_path "/home/ubuntu/capstone/Data/" --audio_path "/home/ubuntu/capstone/AudioWAV/" 
+                              --image_path "/home/ubuntu/capstone/Data/Mel_Spectrograms/" 
+                              --n_mels 1024 
+                              --hop_length 512 
+                              --n_fft 128 
+                              --category "Sex"
 
  - csv_file: this is the csv file found in the Data folder
  - csv_path: the path to the csv file
