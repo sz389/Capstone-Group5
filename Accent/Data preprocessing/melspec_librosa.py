@@ -1,9 +1,8 @@
 
-
+# This file is used to generate Mel spectrograms.
 import librosa.display
 import matplotlib.pyplot as plt
 from IPython.display import Audio
-#augmented_images_path = '/home/ubuntu/Capstone/Augmented_MelSpectrogram_3/'
 
 sample_rate = 16000
 n_fft = 1024
