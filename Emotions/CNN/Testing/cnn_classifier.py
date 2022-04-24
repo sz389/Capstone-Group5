@@ -4,47 +4,68 @@ sys.path.insert(1, '/home/ubuntu/capstone/CNN')
 from Models.cnn import CNN, train_and_test, evaluate_best_model, add_linear
 from Models.autoencoder import cal, Encoder, Decoder, Classifier
 from Utility.dataloader import dataloader
-from Utility.utility import manual_label_encoder
+from Utility.utility import manual_label_encoder, get_classes
 import pandas as pd
-import torch as nn
+import argparse
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-csv_path = '/home/ubuntu/capstone/Data/'
-train_df = pd.read_csv(csv_path + "emotion_train.csv")
-train_df = train_df[['emotion', "Image_file_path"]]
-train_df.columns=['label','id']
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
 
-train_df['label'] = manual_label_encoder(train_df['label'],'emotion')
+    parser.add_argument("--csv_load_path", default=None, type=str, required=True)
+    parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
 
+    args = parser.parse_args()
+    category = args.category
 
-test_df = pd.read_csv(csv_path + "emotion_test.csv")
-test_df = test_df[['emotion', "Image_file_path"]]
-test_df.columns=['label','id']
+    parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
+    parser.add_argument("--val_csv", default=f"{category}_val.csv", type=str, required=False)  # val_csv
+    parser.add_argument("--test_csv", default=f"{category}_test.csv", type=str, required=False)  # test_csv
 
-test_df['label'] = manual_label_encoder(test_df['label'],'emotion')
+    parser.add_argument("--epochs", default=60, type=int, required=False)
+    parser.add_argument("--batch_size", default=64, type=int, required=False)
+    parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
-train_loader = dataloader(train_df, OUTPUTS_a = 6, BATCH_SIZE = 64, IMAGE_SIZE=128)
-test_loader = dataloader(test_df, OUTPUTS_a = 6, BATCH_SIZE = 64, IMAGE_SIZE=128)
+    parser.add_argument("--model_load_and_save_path", default=None, type=str, required=True)
 
-batch_size = 64
-epochs = 25
-IMAGE_SIZE = 128
-num_layers = 3
-learning_rate = 0.00002
-d = 64
+    epochs = args.epochs
+    batch_size = args.batch_size
+    learning_rate = args.learning_rate
+    train_df = args.train_csv
+    val_df = args.val_csv
+    test_df = args.test_csv
+    PATH_SAVE = args.model_load_and_save_path
 
-classes = ['ANG', 'DIS', 'FEA', 'HAP', 'NEU', 'SAD']
-OUTPUTS_a = len(classes)
+    train_df = train_df[[category, "Image_file_path"]]
+    train_df.columns=['label','id']
+    train_df['label'] = manual_label_encoder(train_df['label'],category)
 
-jj, kk = cal(IMAGE_SIZE, num_layers)
-encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
+    val_df = val_df[[category, "Image_file_path"]]
+    val_df.columns=['label','id']
+    val_df['label'] = manual_label_encoder(val_df['label'],category)
 
-PATH_SAVE = "/home/ubuntu/capstone/CNN/Models/Saved_Models/"
+    test_df = test_df[[category, "Image_file_path"]]
+    test_df.columns=['label','id']
+    test_df['label'] = manual_label_encoder(test_df['label'],category)
 
-encoder.load_state_dict(torch.load(PATH_SAVE + "encoder_{}_layers.pt".format(num_layers)))
-cnn = Classifier(encoder, d, OUTPUTS_a)
+    classes = get_classes(category)
+    OUTPUTS_a = len(classes)
 
-model_name = 'cnn_classifier_{}_layers.pt'.format(num_layers)
-train_and_test(cnn, train_loader, test_loader, classes, model_name, epochs, batch_size, learning_rate)
-evaluate_best_model(cnn, test_loader, classes, model_name)
+    IMAGE_SIZE = 128
+    num_layers = 3
+    d = 64
+
+    train_loader = dataloader(train_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
+    val_loader = dataloader(val_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
+    test_loader = dataloader(test_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
+
+    jj, kk = cal(IMAGE_SIZE, num_layers)
+    encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
+
+    encoder.load_state_dict(torch.load(PATH_SAVE + "encoder_{}_layers.pt".format(num_layers)))
+    cnn = Classifier(encoder, d, OUTPUTS_a)
+
+    model_name = f'cnn_classifier_{category}.pt'
+    train_and_test(cnn, train_loader, val_loader, classes, model_name, PATH_SAVE, epochs, batch_size, learning_rate)
+    evaluate_best_model(cnn, test_loader, classes, model_name, PATH_SAVE)
