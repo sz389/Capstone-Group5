@@ -22,7 +22,7 @@ The output will be 3 csv files for the train, validation and test set.
 
 ### Generating Mel Spectrograms
 
-
+3. To run generate_mel_spectrograms.py, 
 
 
 
