@@ -1,4 +1,4 @@
-# How to Run
+# Acessing and Preprocessing the Data
 
 ### Retrieving the Data
 
@@ -11,10 +11,10 @@ Emotion Classification for this project will consist of interpreting audio files
 
 #### Example: 
 
-python3 data_preprocessing.py --csv_file "CREMA_no_path.csv" 
-                              --csv_path "/home/ubuntu/capstone/Data/" 
-                              --audio_path "/home/ubuntu/capstone/AudioWAV/" 
-                              --category "sex"
+python3 data_preprocessing.py --csv_file "CREMA_no_path.csv"                     
+                              --csv_path "/home/ubuntu/capstone/Data/"                 
+                              --audio_path "/home/ubuntu/capstone/AudioWAV/"              
+                              --category "sex"                    
 
  - csv_file: this is the csv file found in the Data folder
  - csv_path: the path to the csv file
@@ -25,7 +25,11 @@ python3 data_preprocessing.py --csv_file "CREMA_no_path.csv"
 ### Generating Mel Spectrograms
 3. Using the csv file generated from data_preprocessing.py called CREMA_with_audio_path.csv, run generate_mel_spectrograms.py to generate Mel Spectrograms in a user-defined folder along with train, validation and test csv files which all include a column with the image path.
 
-### 
+# Running CNN Models
+
+
+
+
 
 
 The model code was referenced from the following github repository https://github.com/m3hrdadfi/soxan
