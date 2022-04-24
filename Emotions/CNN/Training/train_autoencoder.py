@@ -58,7 +58,7 @@ if __name__ == '__main__':
         {'params': decoder.parameters()}
     ]
 
-    optimizer = torch.optim.AdamW(params_to_optimize, lr=lr)
+    optimizer = torch.optim.AdamW(params_to_optimize, lr=learning_rate)
     criterion = nn.MSELoss()
 
     print("Starting Autoencoder...")
