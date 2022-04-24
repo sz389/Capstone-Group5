@@ -176,52 +176,18 @@ def predict(file,category,choose_model):
         predict = torch.Tensor(predict)
         prob = nnf.softmax(predict,dim=1)
 
-    spec = melspec_librosa(x, sample_rate=16000,
-                           n_fft=1024,
-                           win_length=None,
-                           hop_length=512,
-                           n_mels=n_mels)
-    fig, pic = save_spectrogram_gui(spec, 'test', csv_path)
+        spec = melspec_librosa(x, sample_rate=16000,
+                               n_fft=1024,
+                               win_length=None,
+                               hop_length=512,
+                               n_mels=n_mels)
+        fig, pic = save_spectrogram_gui(spec, 'test', csv_path)
     top_p, top_class = prob.topk(len(class_names), dim=1)
     text = ''
     for i in range(len(class_names)):
         temp = f'{class_names[top_class[0][i]]}:{top_p[0][i] * 100:.2f}%\n'
         text = text + temp
     return pic,text
-def predict(file,category):
-    x, sr = librosa.load(file, sr=16000)
-    # IMAGE_SIZE, cnn = define_model(category)
-    class_names, IMAGE_SIZE, model, csv_path,model_path,n_mels,n_fft = get_arg(category)
-    model.load_state_dict(torch.load(f=model_path))
-    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    cnn = model.to(device)
-    cnn.eval()
-    spec = melspec_librosa(x,sample_rate = 16000,
-    n_fft = n_fft,
-    win_length = None,
-    hop_length = 512,
-    n_mels = n_mels)
-    fig,pic = save_spectrogram_gui(spec,'test',csv_path)
-    img = cv2.imread(fig)
-    img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-    X = torch.FloatTensor(img)
-    X = torch.reshape(X, (3, IMAGE_SIZE, IMAGE_SIZE))/255
-    X = torch.unsqueeze(X,0)
-    images = Variable(X).to("cuda")
-    outputs = cnn(images).detach().to(torch.device('cpu'))
-    #print(outputs)
-    import torch.nn.functional as nnf
-    prob = nnf.softmax(outputs, dim=1)
-    top_p, top_class = prob.topk(len(class_names), dim=1)
-    _, predicted = torch.max(outputs.data, 1)
-    print(predicted)
-    # print(f'True label:{label}')=
-    text = ''
-    for i in range(len(class_names)):
-        temp = f'{class_names[top_class[0][i]]}:{top_p[0][i]*100:.2f}%\n'
-        text  = text+temp
-    return pic,text
-    # return pic,class_names[predicted]
 if __name__=='__main__':
     iface = gr.Interface(predict,
                          inputs=[gr.inputs.Audio(source="microphone", \
