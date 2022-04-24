@@ -43,11 +43,11 @@ if __name__ == '__main__':
     classes = get_classes(category)
     OUTPUTS_a = len(classes)
 
-    train_loader = dataloader(train_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
-
     d = 64
     IMAGE_SIZE = 128
     num_layers = 3
+
+    train_loader = dataloader(train_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
 
     jj, kk = cal(IMAGE_SIZE, num_layers)
     encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
@@ -82,5 +82,3 @@ if __name__ == '__main__':
 
     torch.save(encoder.state_dict(), PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers))
     torch.save(decoder.state_dict(), PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers))
-
-
