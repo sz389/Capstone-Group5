@@ -112,9 +112,10 @@ def get_arg_trans(category):
     if category == 'parkinson':
         class_names = ['hc', 'pd']
         best_model_path = model_path + "/wav2vec2-base-finetuned-ks/checkpoint-150/"
-        model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
-        feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
+        
     """" """
+    model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
     model_checkpoint = "facebook/wav2vec2-base"
     model_name = model_checkpoint.split("/")[-1]
 
