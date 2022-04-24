@@ -2,13 +2,13 @@
 
 Emotion Classification for this project will consist of interpreting audio files in which sentences are read in an angry, happy, sad, neutral, disgusted or fear. The notebook in the code folder is written in Python and uses a transformer called Wav2Vec2 with a classification head to train a dataset. The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. The data comes from this repository: https://github.com/CheyneyComputerScience/CREMA-D
 
-The dataset used contains metadata about each audio file:
-![image](https://user-images.githubusercontent.com/54903276/152839639-2366c610-afdc-41cb-92a3-c21fef91c929.png)
+The dataset contains metadata about each audio file: 
 
-The value counts of the emotions to look at the class distribution:
+![image](https://user-images.githubusercontent.com/54903276/164991574-2c61d7ba-382b-4095-8443-2bc6cd93e742.png)
+
+The class distribution of emotions is shown in the table:
 
 ![image](https://user-images.githubusercontent.com/54903276/152840702-e469632d-4b65-4992-8d71-4a2fcbff199a.png)
-
 
 # Acessing and Preprocessing the Data
 
@@ -58,18 +58,45 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (not required)
-- _val_csv_: the validation csv file (not required)
-- _test_csv_: the test csv file (not required)
-- _epochs_: the number of epochs the model should run for (not required)
-- _batch_size_: the batch size for the dataloader (not required)
-- _learning_rate_: the learning rate of the model (not required)
+- _train_csv_: the train csv file (default = {category}_train.csv)
+- _val_csv_: the validation csv file (default = {category}_val.csv)
+- _test_csv_: the test csv file (default = {category}_test.csv)
+- _epochs_: the number of epochs the model should run for (default = 30)
+- _batch_size_: the batch size for the dataloader (default = 64)
+- _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
 - _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
 
 # Using the AutoEncoder
 
+### Training AutoEncoder
+
 The AutoEncoder is used for pretraining the 3 layer CNN model we created. To use the autoencoder, there are 3 steps required: training the autoencoder, testing the autoencoder and loading the autoencoder model parameters to train the classifier to output predictions using the autoencoder model parameters as a starting point.
 
 To run train_autoencoder.py, use the following arguments:
+
+```
+python3 train_autoencoder.py --csv_load_path "Emotion/Data/"                    
+                             --category "emotion"               
+                             --train_csv "emotion_train.csv"          
+                             --epochs 200
+                             --batch_size 64
+                             --learning_rate 1e-3
+                             --model_save_path "Emotion/CNN/Models/Saved_Models/"
+```
+- _csv_load_path_: folder path to load the train, validation and test csv files
+- _category_: either "sex", "age", "race", "emotion"
+- _train_csv_: the train csv file (default = {category}_train.csv)
+- _epochs_: the number of epochs the model should run for (default = 200)
+- _batch_size_: the batch size for the dataloader (default = 64)
+- _learning_rate_: the learning rate of the model (default = 1e-3)
+- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
+
+### Testing AutoEncoder
+
+The purpose of testing the AutoEncoder is to make sure model parameters that were saved can be loaded again and produce the same results which, in this case, is measured by the loss. 
+
+### AutoEncoder for Classification
+
+cnn_
