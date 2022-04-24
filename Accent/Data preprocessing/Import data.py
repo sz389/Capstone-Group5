@@ -1,5 +1,6 @@
 #%%
 # This file is used to import data, add path column in the dataframe, and split data to train, validation, and test sets.
+# we use column 'native_language' to split dataset.
 # user would need to change the CSV path and audio path as needed in the code. 
 import pandas as pd
 csv_path = '/home/ubuntu/Capstone/'
