@@ -110,7 +110,7 @@ python3 testing_autoencoder.py --csv_load_path "Emotion/Data/"
                                --epochs 5
                                --batch_size 64
                                --learning_rate 1e-3
-                               --model_save_path "Emotion/CNN/Models/Saved_Models/"
+                               --model_load_path "Emotion/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -146,4 +146,42 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_save_and_load_path_: the folder path to load and save the the model parameters as a state dict object in pickle format (model.pt)
+
+# Pseudo Labeling
+Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
+
+To run pseudo_labeling_semisupervised.py, use the follow command as reference:
+
+#### Example: 
+
+```
+python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"                    
+                                          --category "emotion"               
+                                          --train_csv "emotion_train.csv"          
+                                          --val_csv "emotion_val.csv"
+                                          --test_csv "emotion_test.csv"
+                                          --unlabeled_csv "unlabeled.csv"
+                                          --epochs 150
+                                          --batch_size 64
+                                          --learning_rate 1e-3
+                                          --model "resnet18"
+                                          --cnn_param_file "resnet18_race.pt"
+                                          --pseudolabeling_param_file "resnet18_race_PL.pt"
+                                          --model_save_and_load_path "Emotion/CNN/Models/Saved_Models/"
+```
+- _csv_load_path_: folder path to load the train, validation and test csv files
+- _category_: either "sex", "age", "race", "emotion"
+- _train_csv_: the train csv file (default = {category}_train.csv)
+- _val_csv_: the validation csv file (default = {category}_val.csv)
+- _test_csv_: the test csv file (default = {category}_test.csv)
+- _unlabeled_csv_: the csv file for the unlabeled data
+- _epochs_: the number of epochs the model should run for (default = 30)
+- _batch_size_: the batch size for the dataloader (default = 64)
+- _learning_rate_: the learning rate of the model (default = 1e-3)
+- _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
+- _cnn_param_file_: the cnn model.pt file to load 
+- _pseudolabeling_param_file_: the model.pt file name to save after semisupervised training to use for evaluation
+- _model_save_and_load_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
+
+
 
