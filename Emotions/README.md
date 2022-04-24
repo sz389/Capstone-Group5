@@ -74,7 +74,9 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 
 The AutoEncoder is used for pretraining the 3 layer CNN model we created. To use the autoencoder, there are 3 steps required: training the autoencoder, testing the autoencoder and loading the autoencoder model parameters to train the classifier to output predictions using the autoencoder model parameters as a starting point.
 
-To run train_autoencoder.py, use the following arguments:
+To run train_autoencoder.py, use the following command as reference:
+
+#### Example
 
 ```
 python3 train_autoencoder.py --csv_load_path "Emotion/Data/"                    
@@ -91,11 +93,32 @@ python3 train_autoencoder.py --csv_load_path "Emotion/Data/"
 - _epochs_: the number of epochs the model should run for (default = 200)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
-- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
+- _model_save_path_: the folder path to save the the AutoEncoder parameters as a state dict object in pickle format (model.pt)
 
 ### Testing AutoEncoder
 
 The purpose of testing the AutoEncoder is to make sure model parameters that were saved can be loaded again and produce the same results which, in this case, is measured by the loss. 
+
+To run testing_autoencoder.py, use the following command as reference:
+
+#### Example
+
+```
+python3 testing_autoencoder.py --csv_load_path "Emotion/Data/"                    
+                               --category "emotion"               
+                               --train_csv "emotion_train.csv"          
+                               --epochs 5
+                               --batch_size 64
+                               --learning_rate 1e-3
+                               --model_save_path "Emotion/CNN/Models/Saved_Models/"
+```
+- _csv_load_path_: folder path to load the train, validation and test csv files
+- _category_: either "sex", "age", "race", "emotion"
+- _train_csv_: the train csv file (default = {category}_train.csv)
+- _epochs_: the number of epochs the model should run for (default = 5)
+- _batch_size_: the batch size for the dataloader (default = 64)
+- _learning_rate_: the learning rate of the model (default = 1e-3)
+- _model_save_path_: the folder path to load the the AutoEncoder parameters as a state dict object in pickle format (model.pt)
 
 ### AutoEncoder for Classification
 
