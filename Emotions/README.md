@@ -145,5 +145,5 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 - _epochs_: the number of epochs the model should run for (default = 60)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
-- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
+- _model_save_and_load_path_: the folder path to load and save the the model parameters as a state dict object in pickle format (model.pt)
 
