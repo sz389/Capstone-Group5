@@ -33,8 +33,11 @@ def preprocess_Parkinson_csv(data_path,save_path):
     df.replace('KCL/SpontaneousDialogue/HC/ID22hc', 'hc', inplace=True)
     # df.to_csv(data_path + 'Parkinson.csv', index=False)
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42, stratify=df["label"])
+    train_df, valid_df = train_test_split(train_df,test_size=0.1, random_state=42,stratify=train_df['label'])
+
 
     train_df.to_csv(f"{save_path}/Parkinsontrain.csv", encoding="utf-8", index=False)
+    valid_df.to_csv(f"{save_path}/Parkinsonvalid.csv", encoding="utf-8", index=False)
     test_df.to_csv(f"{save_path}/Parkinsontest.csv", encoding="utf-8", index=False)
 
 if __name__ == '__main__':

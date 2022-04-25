@@ -1,6 +1,10 @@
 #%%
 import pandas as pd
 import os
+os.chdir('..')
+os.chdir('..')
+import sys
+sys.path.insert(0,os.getcwd())
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -92,11 +96,11 @@ if __name__ == '__main__':
     if not os.path.exists(save_path+'/mel_spectrograms'):
         os.makedirs(save_path+'/mel_spectrograms')
     df = pd.read_csv(csv_path)
-    filename = get_filename(df['id'])
-    img,label = generate_spec(df['id'],filename,df['label'],save_path)
+    filename = get_filename(df['path'])
+    img,label = generate_spec(df['path'],filename,df['text'],save_path)
     df12 = pd.DataFrame()
     df12['id'] = img
-    df12['label'] = label
+    # df12['label'] = label
     df12.to_csv(save_path+'/'+csv_name,index=False)
 
 

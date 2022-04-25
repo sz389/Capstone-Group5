@@ -41,6 +41,69 @@ class CNN(nn.Module):
         x = self.classifier(x)
         return x #return: [64, 64]
 
+class CNN9(nn.Module):
+    def __init__(self, OUTPUTS_a):
+        super(CNN9, self).__init__()
+
+        self.conv1 = nn.Conv2d(3, 16, (3, 3))
+        self.convnorm1 = nn.BatchNorm2d(16)
+        self.pad1 = nn.ZeroPad2d(2)
+
+        self.conv2 = nn.Conv2d(16, 32, (3, 3))
+        self.convnorm2 = nn.BatchNorm2d(32)
+        self.p = nn.MaxPool2d(2, 2)
+
+        self.conv3 = nn.Conv2d(32,64,(3,3))
+        self.convnorm3 = nn.BatchNorm2d(64)
+
+        self.conv4 = nn.Conv2d(64,128,(3,3))
+        self.convnorm4 = nn.BatchNorm2d(128)
+
+        self.conv5 = nn.Conv2d(128, 256, (3, 3))
+        self.convnorm5 = nn.BatchNorm2d(256)
+
+        self.conv6 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm6 = nn.BatchNorm2d(256)
+
+        self.conv7 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm7 = nn.BatchNorm2d(256)
+
+        self.conv8 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm8 = nn.BatchNorm2d(256)
+
+        self.conv9 = nn.Conv2d(256, 256, (3, 3))
+        self.convnorm9 = nn.BatchNorm2d(256)
+
+        # self.conv10 = nn.Conv2d(256, 256, (3, 3))
+        # self.convnorm10 = nn.BatchNorm2d(256)
+        #
+        # self.conv11 = nn.Conv2d(256, 256, (3, 3))
+        # self.convnorm11 = nn.BatchNorm2d(256)
+
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.linear = nn.Linear(256, OUTPUTS_a)
+        self.act = torch.relu
+
+    def forward(self, x):
+        x = self.pad1(self.convnorm1(self.act(self.conv1(x))))
+        x = self.p(self.pad1(self.convnorm2(self.act(self.conv2(x)))))
+        x = self.pad1(self.convnorm3(self.act(self.conv3(x))))
+        x = self.p(self.pad1(self.convnorm4(self.act(self.conv4(x)))))
+        x = self.pad1(self.convnorm5(self.act(self.conv5(x))))
+        x = self.p(self.pad1(self.convnorm6(self.act(self.conv6(x)))))
+        x = self.pad1(self.convnorm7(self.act(self.conv7(x))))
+        x = self.p(self.pad1(self.convnorm8(self.act(self.conv8(x)))))
+        x = self.act(self.convnorm9(self.act(self.conv9(x))))
+        # x = self.p(self.pad1(self.convnorm10(self.act(self.conv10(x)))))
+        # x = self.act(self.convnorm11(self.act(self.conv11(x))))
+
+        return self.linear(self.global_avg_pool(x).view(-1, 256))
+
+def define_cnn(model_name='cnn9',OUTPUTS_a=2):
+    if model_name=='cnn9':
+        model = CNN9(OUTPUTS_a=OUTPUTS_a)
+    return model
 
 def train_and_test(cnn, train_loader, test_loader, classes,
                    model_savename='savemodel.pt',
@@ -53,6 +116,7 @@ def train_and_test(cnn, train_loader, test_loader, classes,
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
     met_best = 0
+    # loss_low = 10
     patience = 4
     for epoch in range(num_epochs):
 
@@ -108,20 +172,24 @@ def train_and_test(cnn, train_loader, test_loader, classes,
         print('Recall: ')
         print(recall_score(y_true, y_pred, average='weighted'))
         print('Accuracy: ')
+        acc = accuracy_score(y_true, y_pred)
         print(accuracy_score(y_true, y_pred))
 
         patience = patience - 1
 
-        if f1 > met_best:
-            patience = 4
-            met_best = f1
+        if acc > met_best:
+        # if loss.item()<loss_low:
+            patience = 12
+            met_best = acc
+            # loss_low=loss.item()
             torch.save(obj=cnn.state_dict(), f=model_savename)
             print('best model saved')
-        if patience == 0:
+        if patience == 0 or met_best==1:
             break
+    print('='*80)
 
 
-def evalute_best_model(cnn,model_path, test_loader, classes):
+def evaluate_best_model(cnn,model_path, test_loader, classes):
 
     # model_path = '/home/ubuntu/capstone/CNN/Models/Saved_Models/'
     cnn.load_state_dict(torch.load(f=model_path))
@@ -161,6 +229,8 @@ def evalute_best_model(cnn,model_path, test_loader, classes):
     print(recall_score(y_true, y_pred, average='weighted'))
     print('Accuracy: ')
     print(accuracy_score(y_true, y_pred))
+    print('='*80)
+
 
 def pretrained_model(model_name,OUTPUTS_a):
     # mlb = MultiLabelBinarizer()
@@ -179,6 +249,7 @@ def pretrained_model(model_name,OUTPUTS_a):
         model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,OUTPUTS_a)
     # cnn = model.to(device)
     return model
+
 def combine_and_evaluate(cnn,model_path,test_loader,xdf_dset_test,class_names):
     print('The result from the best model:')
     cnn.load_state_dict(torch.load(model_path))
@@ -242,3 +313,15 @@ def combine_and_evaluate(cnn,model_path,test_loader,xdf_dset_test,class_names):
     print(f'final f1 score:{f1}')
     print(f'Accuracy: {accuracy_score(pred_result.label_num, pred_result.prediction)}')
     pred_result.to_csv('result.csv',index=False)
+    print('='*80)
+
+class add_linear(nn.Module):
+    def __init__(self, CNN, model_output, OUTPUTS_a):
+        super().__init__()
+        self.model = CNN
+        self.classifier = nn.Linear(model_output, OUTPUTS_a)
+
+    def forward(self,x):
+        x = self.model(x)
+        x = self.classifier(x)
+        return

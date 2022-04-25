@@ -51,7 +51,9 @@ def compute_metrics(eval_pred):
 if __name__ == '__main__':
     # define the model information
     model_path = "/home/ubuntu/Capstone/saved_model/"
-    best_model_path = model_path+"/wav2vec2-base-finetuned-ks/checkpoint-90/"
+    best_model_path = model_path+"/wav2vec2-base-finetuned-ks/checkpoint-150/"
+    # best_model_path = model_path + "tiny-random-unispeech-sat-finetuned-ks/checkpoint-30"
+    # best_model_path = model_path+"wav2vec2-large-960h-finetuned-ks/checkpoint-150"
     model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
     metric = load_metric("accuracy",'f1')
     feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)

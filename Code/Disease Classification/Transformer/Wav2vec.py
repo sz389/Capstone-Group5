@@ -21,6 +21,7 @@ import torchaudio
 import torchaudio.functional as F
 import torchaudio.transforms as T
 from torch.utils import data
+from utility import get_n_params
 #%%
 class dataset(data.Dataset):
     '''
@@ -49,20 +50,27 @@ if __name__ == '__main__':
     model_path = "/home/ubuntu/Capstone/saved_model/"
     if not os.path.exists(model_path):
         os.makedirs(model_path)
+    # load the data
     df_train,df_test = pd.read_csv("/home/ubuntu/Capstone/data/KCL_train_trim_split_audio.csv"),\
                         pd.read_csv("/home/ubuntu/Capstone/data/KCL_valid_trim_split_audio.csv")
-    model_checkpoint = "facebook/wav2vec2-base"
-    labels = ['hc','pd']
-    OUTPUTS_a =len(labels)
-    feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
-    # train_df, test_df = train_test_split(df, test_size=0.2, random_state=101, stratify=df["label"])
-    metric = load_metric("accuracy",'f1')
+    labels = ['hc', 'pd']
     trainset = dataset(df_train)
     testset = dataset(df_test)
     label2id, id2label = dict(), dict()
     for i, label in enumerate(labels):
         label2id[label] = str(i)
         id2label[str(i)] = label
+
+    # Define the model
+    model_checkpoint = "facebook/wav2vec2-base"
+    # model_checkpoint = "microsoft/wavlm-large"
+    # model_checkpoint = "hf-internal-testing/tiny-random-unispeech-sat"
+    # model_checkpoint = "facebook/wav2vec2-large-960h"
+    OUTPUTS_a =len(labels)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
+    # train_df, test_df = train_test_split(df, test_size=0.2, random_state=101, stratify=df["label"])
+    metric = load_metric("accuracy",'f1')
+
 
     batch_size = 4
     num_labels = len(id2label)
@@ -96,4 +104,5 @@ if __name__ == '__main__':
         tokenizer=feature_extractor,
         compute_metrics=compute_metrics
     )
-    trainer.train()
+    # trainer.train()
+    print(f'Parameters: {get_n_params(model)}')

@@ -64,7 +64,7 @@ class Dataset(data.Dataset):
         img = cv2.imread(file_name)
         img = cv2.resize(img, (self.IMAGE_SIZE, self.IMAGE_SIZE))
         X = torch.FloatTensor(img)
-        X = torch.reshape(X, (3, self.IMAGE_SIZE, self.IMAGE_SIZE))
+        X = torch.reshape(X, (3, self.IMAGE_SIZE, self.IMAGE_SIZE))/255
         return X, y
 
 def dataloader(xdf_dset, OUTPUTS_a, BATCH_SIZE = 64, IMAGE_SIZE=128,shuffle=True):
