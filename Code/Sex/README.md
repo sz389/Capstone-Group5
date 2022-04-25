@@ -24,9 +24,9 @@ The class distribution follows the table below:
 
 ```
 python3 data_preprocessing.py --csv_file "CREMA_no_path.csv"                     
-                              --csv_path "/Age/Data/"                 
-                              --audio_path "/Age/Data/AudioWAV/"              
-                              --category "age"                    
+                              --csv_path "/Sex/Data/"                 
+                              --audio_path "/Sex/Data/AudioWAV/"              
+                              --category "sex"                    
 ```
  - _csv_file_: this is the csv file found in the Data folder
  - _csv_path_: the path to the csv file
@@ -46,16 +46,16 @@ To execute these models, run train_cnn.py with the following arguments:
 #### Example: 
 
 ```
-python3 train_cnn.py --csv_load_path "/Age/Data/"                    
-                     --category "age"               
-                     --train_csv "age_train.csv"          
-                     --val_csv "age_val.csv"
-                     --test_csv "age_test.csv"
+python3 train_cnn.py --csv_load_path "/Sex/Data/"                    
+                     --category "sex"               
+                     --train_csv "sex_train.csv"          
+                     --val_csv "sex_val.csv"
+                     --test_csv "sex_test.csv"
                      --epochs 30
                      --batch_size 64
                      --learning_rate 1e-3
                      --model "resnet18"
-                     --model_save_path "/Age/CNN/Models/Saved_Models/"
+                     --model_save_path "/Sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -80,13 +80,13 @@ To run train_autoencoder.py, use the following command as reference:
 #### Example
 
 ```
-python3 train_autoencoder.py --csv_load_path "/Age/Data/"                    
-                             --category "age"               
-                             --train_csv "age_train.csv"          
+python3 train_autoencoder.py --csv_load_path "/Sex/Data/"                    
+                             --category "sex"               
+                             --train_csv "sex_train.csv"          
                              --epochs 200
                              --batch_size 64
                              --learning_rate 1e-3
-                             --model_save_path "/Age/CNN/Models/Saved_Models/"
+                             --model_save_path "/sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -105,13 +105,13 @@ To run testing_autoencoder.py, use the following command as reference:
 #### Example
 
 ```
-python3 testing_autoencoder.py --csv_load_path "/Age/Data/"                    
-                               --category "age"               
-                               --train_csv "age_train.csv"          
+python3 testing_autoencoder.py --csv_load_path "/Sex/Data/"                    
+                               --category "sex"               
+                               --train_csv "sex_train.csv"          
                                --epochs 5
                                --batch_size 64
                                --learning_rate 1e-3
-                               --model_load_path "/Age/CNN/Models/Saved_Models/"
+                               --model_load_path "/Sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -128,15 +128,15 @@ Once the autoencoder model parameters are saved and tested, the next step is to 
 To run cnn_classifier.py, use the following command as reference:
 
 ```
-python3 train_cnn.py --csv_load_path "/Age/Data/"                    
-                     --category "age"               
-                     --train_csv "age_train.csv"          
-                     --val_csv "age_val.csv"
-                     --test_csv "age_test.csv"
+python3 train_cnn.py --csv_load_path "/Sex/Data/"                    
+                     --category "sex"               
+                     --train_csv "sex_train.csv"          
+                     --val_csv "sex_val.csv"
+                     --test_csv "sex_test.csv"
                      --epochs 60
                      --batch_size 64
                      --learning_rate 1e-3
-                     --model_save_and_load_path "/Age/CNN/Models/Saved_Models/"
+                     --model_save_and_load_path "/Sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -156,11 +156,11 @@ To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 #### Example: 
 
 ```
-python3 pseudo_labeling_semisupervised.py --csv_load_path "/Age/Data/"                    
-                                          --category "age"               
-                                          --train_csv "age_train.csv"          
-                                          --val_csv "age_val.csv"
-                                          --test_csv "age_test.csv"
+python3 pseudo_labeling_semisupervised.py --csv_load_path "/Sex/Data/"                    
+                                          --category "sex"               
+                                          --train_csv "sex_train.csv"          
+                                          --val_csv "sex_val.csv"
+                                          --test_csv "sex_test.csv"
                                           --unlabeled_csv "unlabeled.csv"
                                           --epochs 150
                                           --batch_size 64
@@ -168,7 +168,7 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "/Age/Data/"
                                           --model "resnet18"
                                           --cnn_param_file "resnet18_race.pt"
                                           --pseudolabeling_param_file "resnet18_race_PL.pt"
-                                          --model_save_and_load_path "/Age/CNN/Models/Saved_Models/"
+                                          --model_save_and_load_path "/Sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
