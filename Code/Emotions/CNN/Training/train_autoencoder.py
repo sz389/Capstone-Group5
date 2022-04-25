@@ -25,8 +25,7 @@ if __name__ == '__main__':
     parser.add_argument("--epochs", default=200, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
-
-    parser.add_argument("--model",default=None, type=str, required=True)
+    
     parser.add_argument("--model_save_path", default=None, type=str, required=True)
 
     epochs = args.epochs
