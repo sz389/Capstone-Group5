@@ -1,3 +1,8 @@
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+import numpy as np
+import sys
+sys.path.insert(1, '/home/ubuntu/capstone/CNN')
+from Models.cnn import CNN, train_and_test, evaluate_best_model, add_linear, pretrained_model, CNN9
 def manual_label_encoder(df_label, category = "emotion"):
     label_list = []
     if category == "parkinson":
@@ -7,7 +12,7 @@ def manual_label_encoder(df_label, category = "emotion"):
             else:
                 label_list.append(1)
 
-    elif category == "age":
+    elif category == "age": #['<30s', '30s
         for label in df_label:
             if label == "<30s":
                 label_list.append(0)
@@ -36,7 +41,7 @@ def manual_label_encoder(df_label, category = "emotion"):
             else:
                 label_list.append(1)
 
-    elif category == "emotion":
+    elif category == "emotion": #["ANG",'DIS','FEA','HAP','NEU','SAD']
         for label in df_label:
             if label == "ANG":
                 label_list.append(0)
@@ -51,7 +56,7 @@ def manual_label_encoder(df_label, category = "emotion"):
             elif label == "SAD":
                 label_list.append(5)
 
-    elif category == "accent":
+    elif category == "accent": #['arabic', 'english', 'french', 'mandarin','spanish']
         for label in df_label:
             if label == "arabic":
                 label_list.append(0)
@@ -65,3 +70,37 @@ def manual_label_encoder(df_label, category = "emotion"):
                 label_list.append(4)
 
     return label_list
+
+def compute_metrics(eval_pred):
+    """Computes accuracy on a batch of predictions"""
+    eval_labels = eval_pred.label_ids
+    predictions = np.argmax(eval_pred.predictions, axis=1)
+    precision, recall, f1, _ = precision_recall_fscore_support(eval_labels, predictions, average='micro')
+    acc = accuracy_score(eval_labels, predictions)
+    return {
+        'accuracy': acc,
+        'f1': f1,
+        'precision': precision,
+        'recall': recall
+    }
+
+def get_model_params(model):
+    for param in model.parameters():
+        print(param.data)
+
+
+def get_filename(path_list):
+    file_name_list = []
+    for path in path_list:
+        file_name_list.append(str(path).split('/')[-1])
+    return file_name_list
+
+def get_classes(category):
+    if category == "race":
+        return ['Caucasian','African American', 'Asian']
+    elif category == "age":
+        return [ '<30s', '30s', '40s', '50s','>60s']
+    elif category == 'sex':
+        return ['Male','Female']
+    elif category == "emotion":
+        return ["ANG",'DIS','FEA','HAP','NEU','SAD']
