@@ -167,7 +167,7 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "/Sex/Data/"
                                           --learning_rate 1e-3
                                           --model "resnet18"
                                           --cnn_param_file "resnet18_race.pt"
-                                          --pseudolabeling_param_file "resnet18_race_PL.pt"
+                                          --pseudolabeling_param_file "resnet18_sex_PL.pt"
                                           --model_save_and_load_path "/Sex/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
