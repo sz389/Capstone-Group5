@@ -221,12 +221,12 @@ python3 training_wav2vec2.py --csv_load_path "Emotion/Data/"
 
 ```
 python3 training_wav2vec2.py --csv_load_path "/Emotion/Data/"                    
-                                          --category "emotion"               
-                                          --test_csv "emotion_test.csv"          
-                                          --epochs 20
-                                          --batch_size 4
-                                          --learning_rate 3e-5
-                                          --model_load_path "/Emotion/Transformer/Saved_Models/wav2vec2-base-finetuned-ks/checkpoint-835”
+                             --category "emotion"               
+                             --test_csv "emotion_test.csv"          
+                             --epochs 20
+                             --batch_size 4
+                             --learning_rate 3e-5
+                             --model_load_path "/Emotion/Transformer/Saved_Models/wav2vec2-base-finetuned-ks/checkpoint-835”
 ``` 
 
 - _csv_load_path_: folder path to load the train, validation and test csv files
