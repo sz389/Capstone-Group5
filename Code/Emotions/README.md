@@ -184,4 +184,30 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
 - _model_save_and_load_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
 
+# Transformer
+
+### Training on Wav2Vec 2.0
+
+Wav2Vec 2.0 is a powerful framework for self-supervised learning of speech representations. This model produced better results training on emotion data than all CNN models used in this repository. 
+
+```
+python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"                    
+                                          --category "emotion"               
+                                          --train_csv "emotion_train.csv"          
+                                          --val_csv "emotion_val.csv"
+                                          --epochs 20
+                                          --batch_size 4
+                                          --learning_rate 3e-5
+                                          --model_save_name "transformer_emotion"
+                                          --model_save_path "Emotion/CNN/Models/Saved_Models/"
+```                                        
+- _csv_load_path_: folder path to load the train, validation and test csv files
+- _category_: either "sex", "age", "race", "emotion"
+- _train_csv_: the train csv file (default = {category}_train.csv)
+- _val_csv_: the validation csv file (default = {category}_val.csv)
+- _epochs_: the number of epochs the model should run for (default = 150)
+- _batch_size_: the batch size for the dataloader (default = 64)
+- _learning_rate_: the learning rate of the model (default = 1e-3)
+- _model_save_name_: the name of the folder the model checkpoint should be saved in
+- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
