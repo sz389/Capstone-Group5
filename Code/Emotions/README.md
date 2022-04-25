@@ -215,12 +215,12 @@ python3 training_wav2vec2.py --csv_load_path "Emotion/Data/"
 
 ### Evaluating on Wav2Vec 2.0
 
-
+This code file will evaluate the best model checkpoint produced from training_wav2vec2.py on the test set to get the final results.
 
 #### Example: 
 
 ```
-python3 training_wav2vec2.py --csv_load_path "/Emotion/Data/"                    
+python3 evaluate_wav2vec2.py --csv_load_path "/Emotion/Data/"                    
                              --category "emotion"               
                              --test_csv "emotion_test.csv"          
                              --epochs 20
