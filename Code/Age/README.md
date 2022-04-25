@@ -1,10 +1,12 @@
-Age classification for this project will also being using the Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D) from this repository: https://github.com/CheyneyComputerScience/CREMA-D
+# About the Data
 
-The model code used in this notebook comes from this Github repository https://github.com/m3hrdadfi/soxan and uses Wav2Vec2ForSpeechClassification from the transformers library. 
+Age Classification for this project will consist of interpreting audio files in which sentences are read in an angry, happy, sad, neutral, disgusted or fear. The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. The data comes from this repository: https://github.com/CheyneyComputerScience/CREMA-D
 
-The metadata of the audio files and class distribution of the Age column is shown below:
+The dataset contains metadata about each audio file: 
 
-![image](https://user-images.githubusercontent.com/54903276/152847008-97ebe912-c562-4a76-9d38-8a065de24636.png)
+![image](https://user-images.githubusercontent.com/54903276/164991574-2c61d7ba-382b-4095-8443-2bc6cd93e742.png)
+
+The class distribution of Age is shown in the table:
 
 <img width="562" alt="Screen Shot 2022-02-14 at 1 26 31 PM" src="https://user-images.githubusercontent.com/52971217/153924032-095fce32-110d-400b-a3e7-cd8e409ca303.png">
 
