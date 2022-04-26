@@ -15,20 +15,16 @@ if __name__ == '__main__':
 
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
-
-    args = parser.parse_args()
-    category = args.category
-
-    parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
-    parser.add_argument("--val_csv", default=f"{category}_val.csv", type=str, required=False)  # val_csv
-    parser.add_argument("--test_csv", default=f"{category}_test.csv", type=str, required=False)  # test_csv
-
+    parser.add_argument("--model_load_and_save_path", default=None, type=str, required=True)
+    parser.add_argument("--train_csv", default=f"emotion_train.csv", type=str, required=False)  # train_csv
+    parser.add_argument("--val_csv", default=f"emotion_val.csv", type=str, required=False)  # val_csv
+    parser.add_argument("--test_csv", default=f"emotion_test.csv", type=str, required=False)  # test_csv
     parser.add_argument("--epochs", default=60, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
-    parser.add_argument("--model_load_and_save_path", default=None, type=str, required=True)
-
+    args = parser.parse_args()
+    category = args.category
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
@@ -71,5 +67,12 @@ if __name__ == '__main__':
     cnn = Classifier(encoder, d, OUTPUTS_a)
 
     model_name = f'cnn_classifier_{category}.pt'
+
+    print("Training...")
     train_and_test(cnn, train_loader, val_loader, classes, model_name, PATH_SAVE, epochs, batch_size, learning_rate)
+
+    print()
+    print("Evaluating...")
+    print()
+
     evaluate_best_model(cnn, test_loader, classes, model_name, PATH_SAVE)
