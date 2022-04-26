@@ -70,7 +70,7 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 
 # Using the AutoEncoder
 
-### Training AutoEncoder
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_autoencoder.py" target="_blank">Training AutoEncoder</a>
 
 The AutoEncoder is used for pretraining the 3 layer CNN model we created. To use the autoencoder, there are 3 steps required: training the autoencoder, testing the autoencoder and loading the autoencoder model parameters to train the classifier to output predictions using the autoencoder model parameters as a starting point.
 
