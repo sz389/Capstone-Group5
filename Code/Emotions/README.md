@@ -60,9 +60,9 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = {category}_train.csv)
-- _val_csv_: the validation csv file (default = {category}_val.csv)
-- _test_csv_: the test csv file (default = {category}_test.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
+- _val_csv_: the validation csv file (default = emotion_val.csv)
+- _test_csv_: the test csv file (default = emotion_test.csv)
 - _epochs_: the number of epochs the model should run for (default = 30)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
@@ -91,7 +91,7 @@ python3 train_autoencoder.py --csv_load_path "Emotion/Data/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = {category}_train.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
 - _epochs_: the number of epochs the model should run for (default = 200)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
@@ -116,7 +116,7 @@ python3 testing_autoencoder.py --csv_load_path "Emotion/Data/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = {category}_train.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
 - _epochs_: the number of epochs the model should run for (default = 5)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
@@ -141,9 +141,9 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = {category}_train.csv)
-- _val_csv_: the validation csv file (default = {category}_val.csv)
-- _test_csv_: the test csv file (default = {category}_test.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
+- _val_csv_: the validation csv file (default = emotion_val.csv)
+- _test_csv_: the test csv file (default = emotion_test.csv)
 - _epochs_: the number of epochs the model should run for (default = 60)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
@@ -181,9 +181,9 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
 - _cnn_param_file_: the cnn model.pt file to load 
 - _pseudolabeling_param_file_: the model.pt file name to save after semisupervised training to use for evaluation
 - _model_save_and_load_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
-- _train_csv_: the train csv file (default = {category}_train.csv)
-- _val_csv_: the validation csv file (default = {category}_val.csv)
-- _test_csv_: the test csv file (default = {category}_test.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
+- _val_csv_: the validation csv file (default = emotion_val.csv)
+- _test_csv_: the test csv file (default = emotion_test.csv)
 - _unlabeled_csv_: the csv file for the unlabeled data
 - _epochs_: the number of epochs the model should run for (default = 150)
 - _batch_size_: the batch size for the dataloader (default = 64)
@@ -212,8 +212,8 @@ python3 training_wav2vec2.py --csv_load_path "Emotion/Data/"
 ```                                        
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = {category}_train.csv)
-- _val_csv_: the validation csv file (default = {category}_val.csv)
+- _train_csv_: the train csv file (default = emotion_train.csv)
+- _val_csv_: the validation csv file (default = emotion_val.csv)
 - _epochs_: the number of epochs the model should run for (default = 20)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
@@ -239,7 +239,7 @@ python3 evaluate_wav2vec2.py --csv_load_path "/Emotion/Data/"
 
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
-- _test_csv_: the test csv file (default = {category}_test.csv)
+- _test_csv_: the test csv file (default = emotion_test.csv)
 - _epochs_: the number of epochs the model should run for (default = 20)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
