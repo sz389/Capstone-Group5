@@ -18,18 +18,15 @@ if __name__ == '__main__':
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
     parser.add_argument("--model_load_path", default=None, type=str, required=True)
-
-    args = parser.parse_args()
-    csv_load_path = args.csv_load_path
-    category = args.category
-    PATH_SAVE = args.model_load_path
-
-    parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
+    parser.add_argument("--train_csv", default=f"emotion_train.csv", type=str, required=False)  # train_csv
     parser.add_argument("--epochs", default=5, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
     args = parser.parse_args()
+    csv_load_path = args.csv_load_path
+    category = args.category
+    PATH_SAVE = args.model_load_path
     train_csv = args.train_csv
     epochs = args.epochs
     batch_size = args.batch_size
@@ -75,4 +72,3 @@ if __name__ == '__main__':
         losses = np.mean(loss)
 
         print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, losses))
-
