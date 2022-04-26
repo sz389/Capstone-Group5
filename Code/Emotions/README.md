@@ -149,8 +149,11 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_save_and_load_path_: the folder path to load and save the the model parameters as a state dict object in pickle format (model.pt)
 
-# <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Pseudo Labeling</a>
+# Pseudo Labeling
+
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
+
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Peudo Labeling using Semi-Supervised Learning</a>
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
