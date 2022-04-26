@@ -4,6 +4,7 @@ import torch.nn as nn
 import sys
 import pandas as pd
 import argparse
+from tqdm import tqdm
 sys.path.insert(1, '/home/ubuntu/capstone/CNN')
 from Models.autoencoder import Encoder, Decoder, cal
 from Utility.dataloader import dataloader
@@ -17,18 +18,15 @@ if __name__ == '__main__':
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
     parser.add_argument("--model_save_path", default=None, type=str, required=True)
-
-    args = parser.parse_args()
-    csv_load_path = args.csv_load_path
-    category = args.category
-    PATH_SAVE = args.model_save_path
-
-    parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
+    parser.add_argument("--train_csv", default=f"emotion_train.csv", type=str, required=False)  # train_csv
     parser.add_argument("--epochs", default=200, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
     args = parser.parse_args()
+    csv_load_path = args.csv_load_path
+    category = args.category
+    PATH_SAVE = args.model_save_path
     train_csv = args.train_csv
     epochs = args.epochs
     batch_size = args.batch_size
@@ -63,7 +61,7 @@ if __name__ == '__main__':
 
     print("Starting Autoencoder...")
 
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs)):
         encoder.train()
         decoder.train()
         loss = []
@@ -82,3 +80,5 @@ if __name__ == '__main__':
 
     torch.save(encoder.state_dict(), PATH_SAVE + 'encoder_{}_layers.pt'.format(num_layers))
     torch.save(decoder.state_dict(), PATH_SAVE + 'decoder.{}_layers.pt'.format(num_layers))
+
+
