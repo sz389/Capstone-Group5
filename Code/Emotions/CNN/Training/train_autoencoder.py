@@ -16,24 +16,23 @@ if __name__ == '__main__':
 
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
+    parser.add_argument("--model_save_path", default=None, type=str, required=True)
 
     args = parser.parse_args()
+    csv_load_path = args.csv_load_path
     category = args.category
+    PATH_SAVE = args.model_save_path
 
     parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
-
     parser.add_argument("--epochs", default=200, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
-    
-    parser.add_argument("--model_save_path", default=None, type=str, required=True)
 
+    args = parser.parse_args()
+    train_csv = args.train_csv
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
-    train_csv = args.train_csv
-    PATH_SAVE = args.model_save_path
-    csv_load_path = args.csv_load_path
 
     train_df = pd.read_csv(csv_load_path + train_csv)
     train_df = train_df[[category, "Image_file_path"]]
