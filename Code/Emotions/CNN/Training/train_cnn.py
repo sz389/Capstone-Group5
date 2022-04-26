@@ -6,7 +6,7 @@ sys.path.insert(1, '/home/ubuntu/capstone/CNN')
 from Models.cnn import CNN, train_and_test, evaluate_best_model, add_linear, pretrained_model, CNN9
 from Models.autoencoder import cal
 from Utility.dataloader import dataloader
-from Utility.utility import manual_label_encoder, get_model_params, compute_metrics, get_classes
+from Utility.utility import manual_label_encoder, get_classes
 import argparse
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -16,6 +16,8 @@ if __name__ == '__main__':
 
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
+    parser.add_argument("--model",default=None, type=str, required=True)
+    parser.add_argument("--model_save_path", default=None, type=str, required=True)
 
     args = parser.parse_args()
     category = args.category
@@ -28,9 +30,7 @@ if __name__ == '__main__':
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
-    parser.add_argument("--model",default=None, type=str, required=True)
-    parser.add_argument("--model_save_path", default=None, type=str, required=True)
-
+    args = parser.parse_args()
     epochs = args.epochs
     csv_load_path = args.csv_load_path
     batch_size = args.batch_size
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     val_loader = dataloader(val_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
     test_loader = dataloader(test_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
 
-    cnn = pretrained_model(model).to(device)
+    cnn = pretrained_model(model, OUTPUTS_a).to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
