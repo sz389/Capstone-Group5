@@ -71,8 +71,6 @@ def alpha_weight(epoch): #150 epochs, 9 steps per epoch, after 150 epochs, step 
     else:
         return ((epoch - T1) / (T2 - T1)) * af
 
-
-
 acc_scores = []
 unlabel = []
 pseudo_label = []
@@ -80,7 +78,6 @@ pseudo_label = []
 alpha_log = []
 test_acc_log = []
 test_loss_log = []
-
 
 def semisup_train(model, train_loader, unlabeled_loader, val_loader, model_path, model_name):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -146,37 +143,35 @@ if __name__ == '__main__':
 
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, etc.)
+    parser.add_argument("--model",default=None, type=str, required=True)
+    parser.add_argument("--cnn_param_file", default=None, type=str, required=True)
+    parser.add_argument("--pseudolabeling_param_file", default=None, type=str, required=True)
+    parser.add_argument("--model_save_and_load_path", default=None, type=str, required=True)
+    parser.add_argument("--unlabeled_csv", default=None, type=str, required=True)
 
     args = parser.parse_args()
+    csv_load_path = args.csv_load_path
     category = args.category
+    model = args.model
+    cnn_param_file = args.cnn_param_file
+    model_save_and_load_path = args.model_save_and_load_path
+    pseudolabeling_param_file = args.pseudolabeling_param_file
+    unlabeled_csv = args.unlabeled_csv
 
     parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
     parser.add_argument("--val_csv", default=f"{category}_val.csv", type=str, required=False)  # val_csv
     parser.add_argument("--test_csv", default=f"{category}_test.csv", type=str, required=False)  # test_csv
-
-    parser.add_argument("--unlabeled_csv", default=None, type=str, required=True)
-
     parser.add_argument("--epochs", default=30, type=int, required=False)
     parser.add_argument("--batch_size", default=64, type=int, required=False)
     parser.add_argument("--learning_rate", default=1e-3, type=int, required=False)
 
-    parser.add_argument("--model",default=None, type=str, required=True)
-    parser.add_argument("--load_model_param_file_name", default=None, type=str, required=True)
-    parser.add_argument("--save_pseudolabeling_param_file_name", default=None, type=str, required=True)
-    parser.add_argument("--model_save_and_load_path", default=None, type=str, required=True)
-
+    args = parser.parse_args()
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
     train_csv = args.train_csv
     val_csv = args.val_csv
     test_csv = args.test_csv
-    unlabeled_csv = args.unlabeled_csv
-    model = args.model
-    model_save_and_load_path = args.model_save_and_load_path
-    csv_load_path = args.csv_load_path
-    cnn_param_file = args.cnn_param_file
-    pseudolabeling_param_file = args.pseudolabeling_param_file
 
     train_df = pd.read_csv(csv_load_path + train_csv)
     train_df = train_df[[category, "Image_file_path"]]
