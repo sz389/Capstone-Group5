@@ -36,9 +36,11 @@ python3 data_preprocessing.py --csv_file "CREMA_no_path.csv"
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data%20Processing/generate_mel_spectrogram.py" target="_blank">Generating Mel Spectrograms</a>
 3. Using the csv file generated from data_preprocessing.py called CREMA_with_audio_path.csv, run generate_mel_spectrograms.py to generate Mel Spectrograms in a user-defined folder along with train, validation and test csv files which all include a column with the image path.
 
-# <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_cnn.py" target="_blank">Running CNN Models</a>
+# Running CNN Models
 
 There are several CNN models that are implemented in this repository. We designed a 3 layer and 9 layer CNN model and have options for running several pretrained models: Resnet18, Resnet34, VGG16, EfficientNet_b2. 
+
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_cnn.py" target="_blank">Training CNN</a>
 
 To execute these models, run train_cnn.py with the following arguments: 
 
