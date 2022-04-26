@@ -227,6 +227,7 @@ python3 evaluate_wav2vec2.py --csv_load_path "/Emotion/Data/"
                              --batch_size 4
                              --learning_rate 3e-5
                              --model_load_path "/Emotion/Transformer/Saved_Models/wav2vec2-base-finetuned-ks/checkpoint-835”
+                             --model_dir_path "/Emotion/Transformer/Saved_Models/"
 ``` 
 
 - _csv_load_path_: folder path to load the train, validation and test csv files
@@ -236,3 +237,4 @@ python3 evaluate_wav2vec2.py --csv_load_path "/Emotion/Data/"
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
 - _model_save_path_: the folder path to load the the best model parameters from training_wav2vec2.py as a state dict object in pickle format (model.pt)
+- _model_dir_path_: 
