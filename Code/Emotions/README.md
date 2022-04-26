@@ -156,7 +156,11 @@ To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
 ```
 python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"                    
-                                          --category "emotion"               
+                                          --category "emotion"
+                                          --model "resnet18"
+                                          --cnn_param_file "resnet18_emotions.pt"
+                                          --pseudolabeling_param_file "resnet18_emotion_PL.pt"
+                                          --model_save_and_load_path "Emotion/CNN/Models/Saved_Models/"
                                           --train_csv "emotion_train.csv"          
                                           --val_csv "emotion_val.csv"
                                           --test_csv "emotion_test.csv"
@@ -164,13 +168,14 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
                                           --epochs 150
                                           --batch_size 64
                                           --learning_rate 1e-3
-                                          --model "resnet18"
-                                          --cnn_param_file "resnet18_race.pt"
-                                          --pseudolabeling_param_file "resnet18_emotion_PL.pt"
-                                          --model_save_and_load_path "Emotion/CNN/Models/Saved_Models/"
+
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
+- _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
+- _cnn_param_file_: the cnn model.pt file to load 
+- _pseudolabeling_param_file_: the model.pt file name to save after semisupervised training to use for evaluation
+- _model_save_and_load_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 - _train_csv_: the train csv file (default = {category}_train.csv)
 - _val_csv_: the validation csv file (default = {category}_val.csv)
 - _test_csv_: the test csv file (default = {category}_test.csv)
@@ -178,10 +183,6 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
 - _epochs_: the number of epochs the model should run for (default = 150)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
-- _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
-- _cnn_param_file_: the cnn model.pt file to load 
-- _pseudolabeling_param_file_: the model.pt file name to save after semisupervised training to use for evaluation
-- _model_save_and_load_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
 
 # Transformer
