@@ -53,45 +53,52 @@ if __name__ == '__main__':
 
     parser.add_argument("--csv_load_path", default=None, type=str, required=True)  # path to load in csv
     parser.add_argument('--category', default=None, type=str, required=True)  # category (Ex. emotion, race, sex, age)
+    parser.add_argument("--model_load_path", default=None, type=str, required=True)
+    parser.add_argument("--model_dir_path", default=None, type=str, required=True)
 
     args = parser.parse_args()
     category = args.category
     csv_load_path = args.csv_load_path
+    model_load_path = args.model_load_path
+    model_dir_path = args.model_dir_path
 
     parser.add_argument("--test_csv", default=f"{category}_test.csv", type=str, required=False)  # test_csv
-
     parser.add_argument("--epochs", default=20, type=int, required=False)
     parser.add_argument("--batch_size", default=4, type=int, required=False)
     parser.add_argument("--learning_rate", default=3e-5, type=int, required=False)
 
-    parser.add_argument("--model_load_path", default=None, type=str, required=True)
-
+    args = parser.parse_args()
     test_csv = args.test_csv
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
-    best_model_path = args.model_load_path
+
 
     # define the model information
-    model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
-    feature_extractor = AutoFeatureExtractor.from_pretrained(best_model_path)
+    model1 = AutoModelForAudioClassification.from_pretrained(model_load_path)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(model_load_path)
     metric = load_metric("accuracy",'f1')
 
     model_checkpoint = "facebook/wav2vec2-base"
-    model_name = model_checkpoint.split("/")[-1]
+    model_name = model_checkpoint.split("/")[-1] #wav2vec2-base
 
     # define the data and dataset
     df_test = pd.read_csv(csv_load_path + test_csv)
     df_test[category] = manual_label_encoder(df_test[category], category)
-    df_test = df_test[[category, "Audio_file_path"]]
-    df_test.columns = ['label', 'id']
-    test_set = dataset(df_test)
 
     labels = get_classes(category)
     OUTPUTS_a =len(labels)
 
+    df_test = df_test[[category, "Audio_file_path"]]
+    df_test['id'] = df_test['Audio_file_path']
+    df_test['label'] = df_test[category]
+    test_set = dataset(df_test)
+
+    model_dir = model_load_path.split("/")[0:2]
+
     args = TrainingArguments(
-        best_model_path,
+        model_dir_path,
+        #"/home/ubuntu/capstone/Transformer/Models/Saved_Models/Transformer/",
         evaluation_strategy = "epoch",
         save_strategy = "epoch",
         learning_rate=learning_rate,
