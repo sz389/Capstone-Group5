@@ -194,14 +194,15 @@ Wav2Vec 2.0 is a powerful framework for self-supervised learning of speech repre
 
 ```
 python3 training_wav2vec2.py --csv_load_path "Emotion/Data/"                    
-                             --category "emotion"               
+                             --category "emotion"                             
+                             --model_save_name "transformer_emotion"
+                             --model_save_path "Emotion/Transformer/Models/Saved_Models/"
                              --train_csv "emotion_train.csv"          
                              --val_csv "emotion_val.csv"
                              --epochs 20
                              --batch_size 4
                              --learning_rate 3e-5
-                             --model_save_name "transformer_emotion"
-                             --model_save_path "Emotion/Transformer/Models/Saved_Models/"
+
 ```                                        
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
