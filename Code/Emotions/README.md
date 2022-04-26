@@ -95,7 +95,7 @@ python3 train_autoencoder.py --csv_load_path "Emotion/Data/"
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_save_path_: the folder path to save the the AutoEncoder parameters as a state dict object in pickle format (model.pt)
 
-### Testing AutoEncoder
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Testing/testing_autoencoder.py" target="_blank">Testing AutoEncoder</a>
 
 The purpose of testing the AutoEncoder is to make sure model parameters that were saved can be loaded again and produce the same results which, in this case, is measured by the loss. 
 
@@ -120,7 +120,7 @@ python3 testing_autoencoder.py --csv_load_path "Emotion/Data/"
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_save_path_: the folder path to load the the AutoEncoder parameters as a state dict object in pickle format (model.pt)
 
-### AutoEncoder for Classification
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Testing/cnn_classifier.py" target="_blank">AutoEncoder for Classification</a>
 
 Once the autoencoder model parameters are saved and tested, the next step is to use them as a baseline for training a classifier using the same architecture as the Encoder with a classification layer at the end matching the number of classes to make predictions on. 
 
@@ -147,7 +147,7 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 - _learning_rate_: the learning rate of the model (default = 1e-3)
 - _model_save_and_load_path_: the folder path to load and save the the model parameters as a state dict object in pickle format (model.pt)
 
-# Pseudo Labeling
+# <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Pseudo Labeling</a>
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
@@ -187,7 +187,7 @@ python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotion/Data/"
 
 # Transformer
 
-### Training on Wav2Vec 2.0
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Transformer/Training/training_wav2vec2.py" target="_blank">Training on Wav2Vec 2.0</a>
 
 Wav2Vec 2.0 is a powerful framework for self-supervised learning of speech representations. This model produced better results training on emotion data than all CNN models used in this repository.
 
@@ -215,7 +215,7 @@ python3 training_wav2vec2.py --csv_load_path "Emotion/Data/"
 - _model_save_name_: the name of the folder the model checkpoint should be saved in
 - _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
-### Evaluating on Wav2Vec 2.0
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Transformer/Testing/evaluate_wav2vec2.py" target="_blank">Evaluating on Wav2Vec 2.0</a>
 
 This code file will evaluate the best model checkpoint produced from training_wav2vec2.py on the test set to get the final results.
 
