@@ -57,18 +57,15 @@ if __name__ == '__main__':
     parser.add_argument('--category', default=None, type=str, required=True) #category (Ex. emotion, race, sex, age)
     parser.add_argument("--model_save_name", default=None, type=str, required=True)
     parser.add_argument("--model_save_path", default=None, type=str, required=True)
-
-    args = parser.parse_args()
-    category = args.category
-    csv_load_path = args.csv_load_path
-
-    parser.add_argument("--train_csv", default=f"{category}_train.csv", type=str, required=False)  # train_csv
-    parser.add_argument("--val_csv", default=f"{category}_val.csv", type=str, required=False)  # val_csv
+    parser.add_argument("--train_csv", default=f"emotion_train.csv", type=str, required=False)  # train_csv
+    parser.add_argument("--val_csv", default=f"emotion_val.csv", type=str, required=False)  # val_csv
     parser.add_argument("--epochs", default=20, type=int, required=False)
     parser.add_argument("--batch_size", default=4, type=int, required=False)
     parser.add_argument("--learning_rate", default=3e-5, type=int, required=False)
 
     args = parser.parse_args()
+    category = args.category
+    csv_load_path = args.csv_load_path
     train_csv = args.train_csv
     val_csv = args.val_csv
     epochs = args.epochs
