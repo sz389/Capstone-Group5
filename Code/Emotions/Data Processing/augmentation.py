@@ -73,7 +73,7 @@ def random_method(func1,signal1,sr):
 
 #%% call augmentation
 
-def call_augmentation(dataframe, save_path):
+def call_augmentation(dataframe, save_path, image_path):
     Augmented_audio_csv = pd.DataFrame()  # add augmentation data into this df, then export to csv at the end
     Augmented_Image_csv = pd.DataFrame()  # add augmentation image into this df, then export to csv at the end
     for label in dataframe['label']:  # get label name
@@ -93,25 +93,25 @@ def call_augmentation(dataframe, save_path):
                     augmentation_times) + '.wav', augmented_signal, sr)
 
                 Augmented_audio_csv = Augmented_audio_csv.append(
-                    {'Filename': 'Augmented_' + individual_audio_file_name + "_" + str(augmentation_times) + ".wav"
+                    {'Filename': image_path + individual_audio_file_name + "_" + str(augmentation_times) + ".wav"
                         , 'Label': label}, ignore_index=True)
 
                 Augmented_Image_csv = Augmented_Image_csv.append(
-                    {'Filename': 'Augmented_' + individual_audio_file_name + "_" + str(augmentation_times) + ".jpg"
+                    {'Filename': image_path + individual_audio_file_name + "_" + str(augmentation_times) + ".jpg"
                         , 'label': label}, ignore_index=True)
                 del signal1,augmented_signal,spec,save_graph
         else:
             pass
 
-    Augmented_Image_csv.to_csv(save_path + '/augmented_csv/' + 'Augmented_Images.csv')
-    Augmented_audio_csv.to_csv(save_path + '/augmented_csv/' + 'Augmented_Audio.csv')
+    Augmented_Image_csv.to_csv(save_path + '/augmented_csv/' + 'Augmented_Images_Train.csv')
+    Augmented_audio_csv.to_csv(save_path + '/augmented_csv/' + 'Augmented_Audio_Train.csv')
     return Augmented_Image_csv, Augmented_audio_csv
 
 #%%
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv_folder", default=None, type=str, required=True)  # Path of csv to load audio
-    parser.add_argument("--save_path", default=None, type=str, required=True)  #save augmented images/audio
+    parser.add_argument("--csv_folder", default=None, type=str, required=True)  # Path to load train csv
+    parser.add_argument("--save_path", default=None, type=str, required=True)  # save augmented images/audio
     parser.add_argument("--category", default=None, type=str, required=True)
     args = parser.parse_args()
     folder = args.csv_folder
@@ -133,6 +133,10 @@ if __name__ == "__main__":
     train_set_path = df
     df_count, num = preprocess_data(train_set_path)
 
-    Augmented_Image_csv, Augmented_audio_csv = call_augmentation(df_count, save_folder)
+    image_path = save_folder + '/augmented_images/'
+
+    Augmented_Image_csv, Augmented_audio_csv = call_augmentation(df_count, save_folder, image_path)
+
+
 
     #python3 augmentation.py --csv_folder "/home/ubuntu/capstone/Data/" --save_path "/home/ubuntu/capstone/Data_Processing/Augmented/"
