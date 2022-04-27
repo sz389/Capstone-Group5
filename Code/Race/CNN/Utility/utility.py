@@ -1,5 +1,8 @@
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 import numpy as np
+import sys
+sys.path.insert(1, '/home/ubuntu/capstone/CNN')
+from Models.cnn import CNN, train_and_test, evaluate_best_model, add_linear, pretrained_model, CNN9
 def manual_label_encoder(df_label, category = "emotion"):
     label_list = []
     if category == "parkinson":
@@ -38,7 +41,7 @@ def manual_label_encoder(df_label, category = "emotion"):
             else:
                 label_list.append(1)
 
-    elif category == "emotion":
+    elif category == "emotion": #["ANG",'DIS','FEA','HAP','NEU','SAD']
         for label in df_label:
             if label == "ANG":
                 label_list.append(0)
@@ -91,3 +94,13 @@ def get_filename(path_list):
     for path in path_list:
         file_name_list.append(str(path).split('/')[-1])
     return file_name_list
+
+def get_classes(category):
+    if category == "race":
+        return ['Caucasian','African American', 'Asian']
+    elif category == "age":
+        return [ '<30s', '30s', '40s', '50s','>60s']
+    elif category == 'sex':
+        return ['Male','Female']
+    elif category == "emotion":
+        return ["ANG",'DIS','FEA','HAP','NEU','SAD']
