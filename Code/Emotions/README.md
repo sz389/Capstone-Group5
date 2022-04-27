@@ -47,7 +47,7 @@ To execute these models, run train_cnn.py with the following arguments:
 #### Example: 
 
 ```
-python3 train_cnn.py --csv_load_path "Emotions/Data/"                    
+python3 train_cnn.py --csv_load_path "/Emotions/Data/"                    
                      --category "emotion"               
                      --train_csv "emotion_train.csv"          
                      --val_csv "emotion_val.csv"
@@ -56,7 +56,7 @@ python3 train_cnn.py --csv_load_path "Emotions/Data/"
                      --batch_size 64
                      --learning_rate 1e-3
                      --model "resnet18"
-                     --model_save_path "Emotion/CNN/Models/Saved_Models/"
+                     --model_save_path "/Emotion/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -79,8 +79,8 @@ Augmentation is a method of generating more data by manipulating and distorting 
 To run augmentation.py, use the follow command as reference:
 
 ```
-python3 augmentation.py --csv_folder "Emotions/Data/"                    
-                        --save_path "Emotions/Data/"               
+python3 augmentation.py --csv_folder "/Emotions/Data/"                    
+                        --save_path "/Emotions/Data/"               
                         --category "emotion"      
 ```
 - _csv_folder_: path to to load in the train data (emotion_train.csv)
@@ -99,13 +99,13 @@ To run train_autoencoder.py, use the following command as reference:
 #### Example
 
 ```
-python3 train_autoencoder.py --csv_load_path "Emotions/Data/"                    
+python3 train_autoencoder.py --csv_load_path "/Emotions/Data/"                    
                              --category "emotion"               
                              --train_csv "emotion_train.csv"          
                              --epochs 200
                              --batch_size 64
                              --learning_rate 1e-3
-                             --model_save_path "Emotions/CNN/Models/Saved_Models/"
+                             --model_save_path "/Emotions/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -124,13 +124,13 @@ To run testing_autoencoder.py, use the following command as reference:
 #### Example
 
 ```
-python3 testing_autoencoder.py --csv_load_path "Emotions/Data/"                    
+python3 testing_autoencoder.py --csv_load_path "/Emotions/Data/"                    
                                --category "emotion"               
                                --train_csv "emotion_train.csv"          
                                --epochs 5
                                --batch_size 64
                                --learning_rate 1e-3
-                               --model_load_path "Emotions/CNN/Models/Saved_Models/"
+                               --model_load_path "/Emotions/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -147,7 +147,7 @@ Once the autoencoder model parameters are saved and tested, the next step is to 
 To run cnn_classifier.py, use the following command as reference:
 
 ```
-python3 train_cnn.py --csv_load_path "Emotions/Data/"                    
+python3 train_cnn.py --csv_load_path "/Emotions/Data/"                    
                      --category "emotion"               
                      --train_csv "emotion_train.csv"          
                      --val_csv "emotion_val.csv"
@@ -155,7 +155,7 @@ python3 train_cnn.py --csv_load_path "Emotions/Data/"
                      --epochs 60
                      --batch_size 64
                      --learning_rate 1e-3
-                     --model_save_and_load_path "Emotions/CNN/Models/Saved_Models/"
+                     --model_save_and_load_path "/Emotions/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -178,12 +178,12 @@ To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 #### Example: 
 
 ```
-python3 pseudo_labeling_semisupervised.py --csv_load_path "Emotions/Data/"                    
+python3 pseudo_labeling_semisupervised.py --csv_load_path "/Emotions/Data/"                    
                                           --category "emotion"
                                           --model "resnet18"
                                           --cnn_param_file "resnet18_emotions.pt"
                                           --pseudolabeling_param_file "resnet18_emotion_PL.pt"
-                                          --model_save_and_load_path "Emotions/CNN/Models/Saved_Models/"
+                                          --model_save_and_load_path "/Emotions/CNN/Models/Saved_Models/"
                                           --train_csv "emotion_train.csv"          
                                           --val_csv "emotion_val.csv"
                                           --test_csv "emotion_test.csv"
@@ -217,10 +217,10 @@ Wav2Vec 2.0 is a powerful framework for self-supervised learning of speech repre
 #### Example: 
 
 ```
-python3 training_wav2vec2.py --csv_load_path "Emotions/Data/"                    
+python3 training_wav2vec2.py --csv_load_path "/Emotions/Data/"                    
                              --category "emotion"                             
                              --model_save_name "transformer_emotion"
-                             --model_save_path "Emotions/Transformer/Models/Saved_Models/"
+                             --model_save_path "/Emotions/Transformer/Models/Saved_Models/"
                              --train_csv "emotion_train.csv"          
                              --val_csv "emotion_val.csv"
                              --epochs 20
