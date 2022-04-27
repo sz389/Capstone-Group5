@@ -55,24 +55,20 @@ if __name__ == '__main__':
     parser.add_argument('--category', default=None, type=str, required=True)  # category (Ex. emotion, race, sex, age)
     parser.add_argument("--model_load_path", default=None, type=str, required=True)
     parser.add_argument("--model_dir_path", default=None, type=str, required=True)
+    parser.add_argument("--test_csv", default=f"emotion_test.csv", type=str, required=False)  # test_csv
+    parser.add_argument("--epochs", default=20, type=int, required=False)
+    parser.add_argument("--batch_size", default=4, type=int, required=False)
+    parser.add_argument("--learning_rate", default=3e-5, type=int, required=False)
 
     args = parser.parse_args()
     category = args.category
     csv_load_path = args.csv_load_path
     model_load_path = args.model_load_path
     model_dir_path = args.model_dir_path
-
-    parser.add_argument("--test_csv", default=f"{category}_test.csv", type=str, required=False)  # test_csv
-    parser.add_argument("--epochs", default=20, type=int, required=False)
-    parser.add_argument("--batch_size", default=4, type=int, required=False)
-    parser.add_argument("--learning_rate", default=3e-5, type=int, required=False)
-
-    args = parser.parse_args()
     test_csv = args.test_csv
     epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
-
 
     # define the model information
     model1 = AutoModelForAudioClassification.from_pretrained(model_load_path)
