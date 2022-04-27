@@ -98,7 +98,6 @@ if __name__ == '__main__':
 
     args = TrainingArguments(
         model_dir_path,
-        #"/home/ubuntu/capstone/Transformer/Models/Saved_Models/Transformer/",
         evaluation_strategy = "epoch",
         save_strategy = "epoch",
         learning_rate=learning_rate,
