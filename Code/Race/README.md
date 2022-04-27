@@ -1,6 +1,6 @@
 # About the Data
 
-Sex classification, for the purpose of this study, will consist of classification between male and female voices. 
+Race classification, for the purpose of this study, will consist of classification between male and female voices. 
 The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. The data comes from this repository: https://github.com/CheyneyComputerScience/CREMA-D
 
 The dataset contains metadata about each audio file: 
@@ -11,7 +11,7 @@ The class distribution is as follows:
 
 ![image](https://user-images.githubusercontent.com/54903276/152845505-2a46bc3e-765c-4f71-aedd-f2df60bc3481.png)
 
-Along with ethnicity:
+Along with ethnicity (which was not used in this study):
 
 ![image](https://user-images.githubusercontent.com/54903276/152845609-725bd426-3ef4-4532-8b43-2c241519bf4b.png)
 
