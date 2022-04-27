@@ -262,4 +262,4 @@ python3 evaluate_wav2vec2.py --csv_load_path "/Emotion/Data/"
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
 - _model_save_path_: the folder path to load the the best model parameters from training_wav2vec2.py as a state dict object in pickle format (model.pt)
-- _model_dir_path_: 
+- _model_dir_path_: a directory created by the Trainer class 
