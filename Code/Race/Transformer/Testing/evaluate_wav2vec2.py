@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('--category', default=None, type=str, required=True)  # category (Ex. emotion, race, sex, age)
     parser.add_argument("--model_load_path", default=None, type=str, required=True)
     parser.add_argument("--model_dir_path", default=None, type=str, required=True)
-    parser.add_argument("--test_csv", default=f"emotion_test.csv", type=str, required=False)  # test_csv
+    parser.add_argument("--test_csv", default=f"race_test.csv", type=str, required=False)  # test_csv
     parser.add_argument("--epochs", default=20, type=int, required=False)
     parser.add_argument("--batch_size", default=4, type=int, required=False)
     parser.add_argument("--learning_rate", default=3e-5, type=int, required=False)
