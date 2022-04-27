@@ -70,7 +70,25 @@ python3 train_cnn.py --csv_load_path "Emotion/Data/"
 - _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
 
-# Using the AutoEncoder
+# Augmentation
+
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data_Processing/augmentation.py" target="_blank">Augmenting Audio</a>
+
+Augmentation is a method of generating more data by manipulating and distorting the audio to make it slightly different than the original audio. This creates more data in the training set. This file will output 3 folders: augmented_audio which where all the augmented audio files will be stored, augmented_csv where Augmented_Audio_Train.csv and Augmented_Images_Train.csv are stored and augmented_images where all the augmented Mel Spectrograms are stored. The Augmented_Images_Train.csv can be used to replace emotion_train.csv for any training algorithms. 
+
+To run augmentation.py, use the follow command as reference:
+
+```
+python3 augmentation.py --csv_folder "Emotion/Data/"                    
+                        --save_path "Emotion/Data/"               
+                        --category "emotion"      
+```
+- _csv_folder_: path to to load in the train data (emotion_train.csv)
+- _save_path_: where the augmented Audio and Mel Spectrograms should be saved
+- _category_: either "sex", "age", "race", "emotion"
+
+
+# Autoencoder
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_autoencoder.py" target="_blank">Training AutoEncoder</a>
 
