@@ -16,10 +16,10 @@ from data_preprocessing import train_val_test_split
 
 #%%
 def melspec_librosa(x,sample_rate = 16000,
-    n_fft = 1536,
+    n_fft = 2048,
     win_length = None,
-    hop_length = 512,
-    n_mels = 160):
+    hop_length = 1024,
+    n_mels = 128):
     return librosa.feature.melspectrogram(
     y = x,
     sr=sample_rate,
