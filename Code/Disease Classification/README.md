@@ -56,7 +56,6 @@ To execute these models, run train_cnn.py with the following arguments:
 ```
 python3 -m CNN.train.train_cnn --csv_folder "/home/ubuntu/Capstone/data/" 
                                --model_dir "/home/ubuntu/Capstone/saved_model/"
-
 ```
 - _csv_folder_: folder path to load the train, validation and test csv files
 - _model_dir_: directory to save the model
