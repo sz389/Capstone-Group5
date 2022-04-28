@@ -209,7 +209,7 @@ python3 -m Training.Training_Wav2Vec2 --csv_load_path "/home/ubuntu/Capstone/dat
 - _val_csv_: the validation csv file 
 - _model_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Transformer/Testing/Evaluate_Transformer.py" target="_blank">Evaluating on Wav2Vec 2.0</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Transformers/Testing/Evaluate_Transformer.py" target="_blank">Evaluating on Wav2Vec 2.0</a>
 
 This code file will evaluate the best model checkpoint produced from training_wav2vec2.py on the test set to get the final results.
 
