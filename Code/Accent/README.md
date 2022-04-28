@@ -27,7 +27,7 @@ python3 -m Import_Data --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"
  - _csv_name_: this is the file name
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data Preprocessing/Trim_Split_Melspec.py" target="_blank">Split and Generating Mel Spectrograms</a>
-3. Since the audios are too long, we need to split into chunks put into models. Besides, we generate mel-spectrograms for CNN models.  
+Since the audios are too long, we need to split into chunks put into models. Besides, we generate mel-spectrograms for CNN models.  
 ### Example:
 ```
 python3 -m Data_Preprocessing.Trim_Split_Melspec --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"
