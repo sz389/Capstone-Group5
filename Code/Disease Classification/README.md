@@ -113,7 +113,7 @@ python3 -m CNN.test.cnn_classfier --csv_load_path "/home/ubuntu/Capstone/data/"
 
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/CNN/train/pseudolabel.py" target="_blank">Peudo Labeling using Semi-Supervised Learning</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/CNN/train/pseudolabel.py" target="_blank">Pseudo Labeling using Semi-Supervised Learning</a>
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
