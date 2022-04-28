@@ -15,7 +15,7 @@ Along with ethnicity (which was not used in this study):
 
 ![image](https://user-images.githubusercontent.com/54903276/152845609-725bd426-3ef4-4532-8b43-2c241519bf4b.png)
 
-# Acessing and Preprocessing the Data
+# Accessing and Preprocessing the Data
 
 ### Retrieving the Data
 
@@ -176,7 +176,7 @@ python3 train_cnn.py --csv_load_path "/Race/Data/"
 
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Race/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Peudo Labeling using Semi-Supervised Learning</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Race/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Pseudo Labeling using Semi-Supervised Learning</a>
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
