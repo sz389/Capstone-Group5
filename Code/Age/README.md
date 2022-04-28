@@ -1,20 +1,27 @@
 # About the Data
 
-Age Classification for this project will consist of interpreting audio files in which sentences are read in an angry, happy, sad, neutral, disgusted or fear. The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset (CREMA-D). The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. The data comes from this repository: https://github.com/CheyneyComputerScience/CREMA-D
+Age Classification for this project will consist of interpreting audio files in which sentences are read in an angry, happy, sad, neutral, disgusted or fear. The dataset that is being used in this model comes from a Crowd-sourced Emotional Multimodal Actors Dataset <a href="https://github.com/CheyneyComputerScience/CREMA-D" target="_blank">(CREMA-D)</a>. The data contains  age, sex, race, ethnicity information from 91 actors, 48 male and 42 female actors who speak 12 sentences in 6 emotions at 4 emotion levels. 
 
 The dataset contains metadata about each audio file: 
 
 ![image](https://user-images.githubusercontent.com/54903276/164991574-2c61d7ba-382b-4095-8443-2bc6cd93e742.png)
 
-The class distribution of Age is shown in the table:
+We grouped age by decades, and combined 60s, 70s as >60s. The class distribution of age is shown in the table: 
 
-<img width="562" alt="Screen Shot 2022-02-14 at 1 26 31 PM" src="https://user-images.githubusercontent.com/52971217/153924032-095fce32-110d-400b-a3e7-cd8e409ca303.png">
+| age         | count     | percentage|
+| -----------  | ----------- |  ----------- |
+| <30s       | 2774      |37 %|
+| 30s         | 1886      | 25%|
+| 40s         | 1306      | 18%|
+| 50s         | 984      | 13%|
+| >60s         | 492      | 7%|
+
 
 # Accessing and Preprocessing the Data
 
 ### Retrieving the Data
 
-1. Follow the instructions on CREMA-D Github README to access the AudioWAV folder to retrieve all the audio files.
+1. Follow the instructions on <a href="https://github.com/CheyneyComputerScience/CREMA-D" target="_blank">CREMA-D</a> Github README to access the AudioWAV folder to retrieve all the audio files.
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Age/Data%20Processing/data_preprocessing.py" target="_blank">Data Preprocessing</a>
 2. Using the CREMA_no_path.csv file that can be found in the Data folder, along with the AudioWAV folder, run data_preprocessing.py in the terminal in the following format to generate a new csv file with the audio file name, audio path and corresponding labels.
