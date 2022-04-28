@@ -18,99 +18,70 @@ unzip 26_29_09_2017_KCL.zip
 ```
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/Data_Preprocessing/generate_csv.py" target="_blank">Data Preprocessing</a>
-2. Using the CREMA_no_path.csv file that can be found in the Data folder, along with the AudioWAV folder, run data_preprocessing.py in the terminal in the following format to generate a new csv file with the audio file name, audio path and corresponding labels.
+2. Preprocess the data and create a new csv file to load the audios.  
+Previous to run the code, change the directory to root directory of this category (eg: cd path/Disease Classification)  
 
 #### Example: 
 
 ```
-python3 data_preprocessing.py --csv_file "CREMA_no_path.csv"                     
-                              --csv_path "/Emotions/Data/"                 
-                              --audio_path "/Emotions/Data/AudioWAV/"              
-                              --category "sex"                    
+python3 -m Data_Preprocessing.generate_csv --load_path "/home/ubuntu/Capstone/data/original_files/26-29_09_2017_KCL/" 
+                                           --save_path "/home/ubuntu/Capstone/data/"                             
 ```
- - _csv_file_: this is the csv file found in the Data folder
- - _csv_path_: the path to the csv file
- - _audio_path_: the path to the AudioWAV folder downloaded from the CREMA-D github
- - _category_: either sex, age, race or emotion
+ - _load_path_: this is the data folder
+ - _save_path_: the folder to save the csv file
  
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/Data_Processing/generate_mel_spectrogram.py" target="_blank">Generating Mel Spectrograms</a>
-3. Using the csv file generated from data_preprocessing.py called CREMA_with_audio_path.csv, run generate_mel_spectrograms.py to generate Mel Spectrograms in a user-defined folder along with train, validation and test csv files which all include a column with the image path.
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/Data_Preprocessing/trim_split.py" target="_blank">Generating Mel Spectrograms</a>
+3. Since the audios are too long, we need to split into chunks put into models. Besides, we generate mel-spectrograms for CNN models.  
+### Example:
+```
+python3 -m Data_Preprocessing.trim_split --csv_folder "/home/ubuntu/Capstone/data/"
+                                         --save_path "/home/ubuntu/Capstone/data/"
+```
+ - _csv_folder_: this the folder of the csv file
+ - _save_path_: the path to save mel-spectrograms and new csv files
+ 
+
 
 # Running CNN Models
 
 There are several CNN models that are implemented in this repository. We designed a 3 layer and 9 layer CNN model and have options for running several pretrained models: Resnet18, Resnet34, VGG16, EfficientNet_b2. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_cnn.py" target="_blank">Training CNN</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/CNN/train/train_cnn.py" target="_blank">Training CNN</a>
 
 To execute these models, run train_cnn.py with the following arguments: 
 
 #### Example: 
 
 ```
-python3 train_cnn.py --csv_load_path "/Emotions/Data/"                    
-                     --category "emotion"               
-                     --train_csv "emotion_train.csv"          
-                     --val_csv "emotion_val.csv"
-                     --test_csv "emotion_test.csv"
-                     --epochs 30
-                     --batch_size 64
-                     --learning_rate 1e-3
-                     --model "resnet18"
-                     --model_save_path "/Emotion/CNN/Models/Saved_Models/"
-```
-- _csv_load_path_: folder path to load the train, validation and test csv files
-- _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = emotion_train.csv)
-- _val_csv_: the validation csv file (default = emotion_val.csv)
-- _test_csv_: the test csv file (default = emotion_test.csv)
-- _epochs_: the number of epochs the model should run for (default = 30)
-- _batch_size_: the batch size for the dataloader (default = 64)
-- _learning_rate_: the learning rate of the model (default = 1e-3)
-- _model_: one of "cnn3", "cnn9", "resnet18", "renset34", "vgg16", "efficientnet"
-- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
-
-
-# Augmentation
-
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/Data_Processing/augmentation.py" target="_blank">Augmenting Audio</a>
-
-Augmentation is a method of generating more data by manipulating and distorting the audio to make it slightly different than the original audio. This creates more data in the training set. This file will output 3 folders: augmented_audio which where all the augmented audio files will be stored, augmented_csv where Augmented_Audio_Train.csv and Augmented_Images_Train.csv are stored and augmented_images where all the augmented Mel Spectrograms are stored. The Augmented_Images_Train.csv can be used to replace emotion_train.csv for any training algorithms. 
-
-To run augmentation.py, use the follow command as reference:
+python3 -m CNN.train.train_cnn --csv_folder "/home/ubuntu/Capstone/data/" 
+                               --model_dir "/home/ubuntu/Capstone/saved_model/"
 
 ```
-python3 augmentation.py --csv_folder "/Emotions/Data/"                    
-                        --save_path "/Emotions/Data/"               
-                        --category "emotion"      
-```
-- _csv_folder_: path to to load in the train data (emotion_train.csv)
-- _save_path_: where the augmented Audio and Mel Spectrograms should be saved
-- _category_: either "sex", "age", "race", "emotion"
+- _csv_folder_: folder path to load the train, validation and test csv files
+- _model_dir_: directory to save the model
+
+
 
 
 # Autoencoder
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Emotions/CNN/Training/train_autoencoder.py" target="_blank">Training AutoEncoder</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Disease%20Classification/CNN/train/train_autoencoder.py" target="_blank">Training AutoEncoder</a>
 
-The AutoEncoder is used for pretraining the 3 layer CNN model we created. To use the autoencoder, there are 3 steps required: training the autoencoder, testing the autoencoder and loading the autoencoder model parameters to train the classifier to output predictions using the autoencoder model parameters as a starting point.
+The AutoEncoder is used for pretraining the 3 layer CNN model we created. To use the autoencoder, there are 2 steps required: training the autoencoder and loading the autoencoder model parameters to train the classifier to output predictions using the autoencoder model parameters as a starting point.
 
 To run train_autoencoder.py, use the following command as reference:
 
 #### Example
 
 ```
-python3 train_autoencoder.py --csv_load_path "/Emotions/Data/"                    
-                             --category "emotion"               
-                             --train_csv "emotion_train.csv"          
-                             --epochs 200
-                             --batch_size 64
-                             --learning_rate 1e-3
-                             --model_save_path "/Emotions/CNN/Models/Saved_Models/"
+python3 -m CNN.train.train_autoencoder --csv_load_path "/home/ubuntu/Capstone/data/"          
+                                       --epochs 200
+                                       --batch_size 64
+                                       --learning_rate 1e-3
+                                       --model_save_path "/home/ubuntu/Capstone/saved_model/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
-- _category_: either "sex", "age", "race", "emotion"
-- _train_csv_: the train csv file (default = emotion_train.csv)
 - _epochs_: the number of epochs the model should run for (default = 200)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 1e-3)
