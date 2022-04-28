@@ -14,7 +14,7 @@ Accent detection data comes from the <a href="https://www.kaggle.com/rtatman/spe
 
 ### Retrieving the Data
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data Preprocessing/generate_csv.py" target="_blank">Data Preprocessing</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data Preprocessing/" target="_blank">Data Preprocessing</a>
 Preprocess the data and create a new csv file to load the audios.  
 
 #### Example: 
