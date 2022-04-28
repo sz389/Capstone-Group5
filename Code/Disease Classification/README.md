@@ -1,8 +1,11 @@
 # About the Data
 
 Disease Classification for this project will consist of interpreting audio files in which healthy and Parkinson's patients spontaneouly talk or read text. The notebook in the code folder is written in Python and uses CNN model and Wav2Vec2 transformer with a classification head to train a dataset.   
+
 The dataset reference:  
-_Hagen Jaeger, Dhaval Trivedi, & Michael Stadtschnitzer. (2019). Mobile Device Voice Recordings at King's College London (MDVR-KCL) from both early and advanced Parkinson's disease patients and healthy controls [Data set]. Zenodo. https://doi.org/10.5281/zenodo.2867216_
+_Hagen Jaeger, Dhaval Trivedi, & Michael Stadtschnitzer. (2019). Mobile Device Voice Recordings at King's College London (MDVR-KCL) from both early and advanced Parkinson's disease patients and healthy controls [Data set]. Zenodo. https://doi.org/10.5281/zenodo.2867216_  
+
+_Keith Ito &  Linda Johnson. (2017). The LJ Speech Dataset. LJspeech17. https://keithito.com/LJ-Speech-Dataset/_
 
 
 # Acessing and Preprocessing the Data
