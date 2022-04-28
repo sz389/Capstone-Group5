@@ -1,6 +1,6 @@
 # About the Data
 
-Accent detection data comes from the following Kaggle archive: https://www.kaggle.com/rtatman/speech-accent-archive?select=recordings. "This dataset contains 2140 speech samples, each from a different talker reading the same reading passage. Talkers come from 177 countries and have 214 different native languages. Each talker is speaking in English." The size of this dataset is 951 MB. In this project, we will focus on top 5 native lanuages and the total number of original data files for those 5 native lanuages is 971. And they are English, Arabic, Spanish, French, and Madarin. The data distribution is showing as below:
+Accent detection data comes from the following Kaggle archive: https://www.kaggle.com/rtatman/speech-accent-archive?select=recordings. "This dataset contains 2140 speech samples, and speakers are come from 177 countries and have 214 different native languages. Each speaker speaks same content in English." The size of this dataset is 951 MB. In this project, we will focus on top 5 native lanuages and the total number of original data files for those 5 native lanuages is 971. And they are English, Arabic, Spanish, French, and Madarin. The data distribution is showing as below:
 
 * English: 579
 * Spanish: 162
