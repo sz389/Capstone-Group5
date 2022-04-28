@@ -8,7 +8,15 @@ The dataset contains metadata about each audio file:
 
 The class distribution of emotions is shown in the table:
 
-![image](https://user-images.githubusercontent.com/54903276/152840702-e469632d-4b65-4992-8d71-4a2fcbff199a.png)
+| emotion  | count| percentage|
+| ---------| -----|  ----------- |
+| ANG      | 1271|17%|
+| DIS      | 1271|17%|
+| FEA      | 1271|17%|
+| HAP      | 1271|17%|
+| SAD      | 1271|17%|
+| NEU      | 1087|15%|
+
 
 # Accessing and Preprocessing the Data
 
