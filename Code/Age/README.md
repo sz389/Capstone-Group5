@@ -147,15 +147,15 @@ Once the autoencoder model parameters are saved and tested, the next step is to 
 To run cnn_classifier.py, use the following command as reference:
 
 ```
-python3 train_cnn.py --csv_load_path "/Age/Data/"                    
-                     --category "age"               
-                     --train_csv "age_train.csv"          
-                     --val_csv "age_val.csv"
-                     --test_csv "age_test.csv"
-                     --epochs 60
-                     --batch_size 64
-                     --learning_rate 1e-3
-                     --model_save_and_load_path "/Age/CNN/Models/Saved_Models/"
+python3 cnn_classifier.py --csv_load_path "/Age/Data/"                    
+                          --category "age"               
+                          --train_csv "age_train.csv"          
+                          --val_csv "age_val.csv"
+                          --test_csv "age_test.csv"
+                          --epochs 60
+                          --batch_size 64
+                          --learning_rate 1e-3
+                          --model_save_and_load_path "/Age/CNN/Models/Saved_Models/"
 ```
 - _csv_load_path_: folder path to load the train, validation and test csv files
 - _category_: either "sex", "age", "race", "emotion"
@@ -236,7 +236,7 @@ python3 training_wav2vec2.py --csv_load_path "/Age/Data/"
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
 - _model_save_name_: the name of the folder the model checkpoint should be saved in
-- _model_save_path_: the folder path to save the the model parameters as a state dict object in pickle format (model.pt)
+- _model_save_path_: the folder path to save the the model parameters in a checkpoint directory
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Age/Transformer/Testing/evaluate_wav2vec2.py" target="_blank">Evaluating on Wav2Vec 2.0</a>
 
@@ -261,7 +261,7 @@ python3 evaluate_wav2vec2.py --csv_load_path "/Age/Data/"
 - _epochs_: the number of epochs the model should run for (default = 20)
 - _batch_size_: the batch size for the dataloader (default = 64)
 - _learning_rate_: the learning rate of the model (default = 3e-5)
-- _model_save_path_: the folder path to load the the best model parameters from training_wav2vec2.py as a state dict object in pickle format (model.pt)
+- _model_save_path_: the folder path to load the the checkpoint directory with the best model parameters from training_wav2vec2.py
 - _model_dir_path_: a directory created by the Trainer class 
 
 
