@@ -10,7 +10,7 @@ The class distribution of Age is shown in the table:
 
 <img width="562" alt="Screen Shot 2022-02-14 at 1 26 31 PM" src="https://user-images.githubusercontent.com/52971217/153924032-095fce32-110d-400b-a3e7-cd8e409ca303.png">
 
-# Acessing and Preprocessing the Data
+# Accessing and Preprocessing the Data
 
 ### Retrieving the Data
 
