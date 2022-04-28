@@ -30,9 +30,8 @@ python3 -m Import_Data --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"
 3. Since the audios are too long, we need to split into chunks put into models. Besides, we generate mel-spectrograms for CNN models.  
 ### Example:
 ```
-python3 -m Data_Preprocessing.Trim_Split_Melspec.
---csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"
---save_path "/home/ubuntu/Capstone/Data_Preprocessing/"
+python3 -m Data_Preprocessing.Trim_Split_Melspec --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"
+                                                 --save_path "/home/ubuntu/Capstone/Data_Preprocessing/"
 ```
  - _csv_folder_: this is the folder of the csv file
  - _save_path_: the path to save new audio files, mel-spectrograms and new csv files
@@ -47,7 +46,7 @@ Augmentation is a method of generating more data by manipulating and distorting 
 To run augmentation.py, use the follow command as reference:
 
 ```
-python3 -m Augmentation.py --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"                    
+python3 -m Augmentation --csv_folder "/home/ubuntu/Capstone/Data_Preprocessing/"                    
                         --csv_name "new_train_trim_split_spec.csv"               
                         --audio_folder "/home/ubuntu/Capstone/recordings/recordings/"         
                         --save_path "/home/ubuntu/Capstone/data_train_val_test/"
