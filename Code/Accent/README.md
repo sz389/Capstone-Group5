@@ -81,7 +81,7 @@ python3 -m Combine_Origin_Augmentated --origin_csv_path "/home/ubuntu/Capstone/d
 
 There are several CNN models that are implemented in this repository. We designed a 3 layer and 9 layer CNN model and have options for running several pretrained models: Resnet18, Resnet34, VGG16, EfficientNet_b2. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/CNN/Train/Train_CNN.py" target="_blank">Training CNN</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/CNN/Models/Train_CNN.py" target="_blank">Training CNN</a>
 
 To execute these models, run Train_CNN.py with the following arguments: 
 
