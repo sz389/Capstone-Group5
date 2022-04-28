@@ -8,7 +8,7 @@ Accent detection data comes from the following Kaggle archive: https://www.kaggl
 * Mandarin: 65
 * French: 63
 
-# Acessing and Preprocessing the Data
+# Accessing and Preprocessing the Data
 
 ### Retrieving the Data
 
