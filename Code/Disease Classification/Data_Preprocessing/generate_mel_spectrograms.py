@@ -1,18 +1,9 @@
 #%%
 import pandas as pd
 import os
-os.chdir('..')
-os.chdir('..')
-import sys
-sys.path.insert(0,os.getcwd())
-import math
-import numpy as np
 import matplotlib.pyplot as plt
-# import IPython.display as ipd  # To play sound in the notebook
 import librosa
 import librosa.display
-import tqdm
-import soundfile as sf
 import argparse
 from utility import get_filename
 #%%

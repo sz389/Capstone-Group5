@@ -1,15 +1,10 @@
-from matplotlib import pyplot as plt
+
 import torch
-from torchvision import datasets, transforms
 from torch import nn
-import torch.nn.functional as F
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import f1_score, confusion_matrix
 from torch.autograd import Variable
 import pandas as pd
-import sys
-sys.path.insert(1, '/home/ubuntu/capstone/CNN')
 from CNN.models.cnn import CNN, train_and_test, evaluate_best_model, pretrained_model, CNN9,define_cnn, combine_and_evaluate
 import os
 import cv2
@@ -18,8 +13,6 @@ from utility import dataloader,get_n_params
 
 torch.manual_seed(42)
 np.random.seed(42)
-# torch.backends.cudnn.deterministic = True
-# torch.backends.cudnn.benchmark = False
 
 class Dataset(data.Dataset):
     '''
@@ -98,21 +91,13 @@ def alpha_weight(epoch): #150 epochs, 9 steps per epoch, after 150 epochs, step 
 
 # Concept from : https://github.com/peimengsui/semi_supervised_mnist
 
-from tqdm import tqdm
-
-acc_scores = []
-unlabel = []
-pseudo_label = []
-
-alpha_log = []
-test_acc_log = []
-test_loss_log = []
 
 
-def semisup_train(model, train_loader, unlabeled_loader, val_loader):
+
+def semisup_train(model, train_loader, unlabeled_loader, val_loader,epochs):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
-    EPOCHS = 150
+    EPOCHS = epochs
     met_best = 0
     patience = 20
     # Instead of using current epoch we use a "step" variable to calculate alpha_weight
@@ -168,44 +153,75 @@ def semisup_train(model, train_loader, unlabeled_loader, val_loader):
         if patience==0:
             break
         model.train()
-batch_size = 64
-d = 64
-IMAGE_SIZE = 128
-num_layers = 3
-learning_rate = 1e-3
-df_unlabel = pd.read_csv("/home/ubuntu/Capstone/LJSpeech-1.1/LJimg.csv")
-df_train = pd.read_csv("/home/ubuntu/Capstone/data/KCL_train_trim_split_spec.csv")
-df_val = pd.read_csv("/home/ubuntu/Capstone/data/KCL_valid_trim_split_spec.csv")
-df_test = pd.read_csv("/home/ubuntu/Capstone/data/KCL_test_trim_split_spec.csv")
-model_dir = "/home/ubuntu/Capstone/saved_model/"
-if not os.path.exists(model_dir):
-    os.makedirs(model_dir)
-OUTPUTS_a = 2
-classnames = ['hc','pd']
-batch_size = 64
-num_epochs = 50
-train_loader = dataloader(xdf_dset=df_train,OUTPUTS_a=OUTPUTS_a,
-                          BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=True)
-val_loader = dataloader(xdf_dset=df_val,OUTPUTS_a=OUTPUTS_a,
-                          BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=True)
-test_loader = dataloader(xdf_dset=df_test,OUTPUTS_a=OUTPUTS_a,
-                          BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=False)
-unlabeled_loader = unlabel_dataloader(df_unlabel,OUTPUTS_a=OUTPUTS_a,
-                          BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=False)
-classnames=['hc','pd']
-net = define_cnn(OUTPUTS_a=len(classnames))
-net.to('cuda')
-model_dir = "/home/ubuntu/Capstone/saved_model/"
+from tqdm import tqdm
+import argparse
+if __name__ =='__main__':
+    parser = argparse.ArgumentParser()
 
-model_savename = model_dir + 'cnn9_parkinson.pt'
-net.load_state_dict(torch.load(model_savename))
+    parser.add_argument("--csv_load_path", default=None, type=str, required=True)
+    # make sure the unlabeled csv has a column named "id" which is the path to the images (mel-spectrograms)
+    parser.add_argument("--unlabeled_csv",default=None,type = str, required=True)
 
-T1 = 100
-T2 = 700 # change with epoch value
-af = 0.50 # correlates to confidence level in unlabeled data
-OUTPUTS_a = len(classnames)
-semisup_train(net, train_loader, unlabeled_loader, val_loader)
+    parser.add_argument("--epochs", default=150, type=int, required=False)
+    parser.add_argument("--model_dir", default=None, type=str, required=True)
 
-net.load_state_dict(torch.load(f=model_dir+"supervised_weights_disease_ifbatch10.pt"))
-test_acc, test_loss = evaluate(net, test_loader)
-print('Test Acc : {:.5f} | Test Loss : {:.3f} '.format(test_acc, test_loss))
+    args = parser.parse_args()
+
+    epochs = args.epochs
+    unlabeled_path = args.unlabeled_csv
+
+    # train_csv = args.train_csv
+    model_dir = args.model_dir
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    csv_load_path = args.csv_load_path
+
+
+    acc_scores = []
+    unlabel = []
+    pseudo_label = []
+
+    alpha_log = []
+    test_acc_log = []
+    test_loss_log = []
+    batch_size = 64
+    d = 64
+    IMAGE_SIZE = 128
+    num_layers = 3
+    learning_rate = 1e-3
+    df_unlabel = pd.read_csv(unlabeled_path)
+    # df_unlabel = pd.read_csv("/home/ubuntu/Capstone/LJSpeech-1.1/LJimg.csv")
+    df_train = pd.read_csv(csv_load_path+"/KCL_train_trim_split_spec.csv")
+    df_val = pd.read_csv(csv_load_path+"/KCL_valid_trim_split_spec.csv")
+    df_test = pd.read_csv(csv_load_path+"/KCL_test_trim_split_spec.csv")
+    # model_dir = "/home/ubuntu/Capstone/saved_model/"
+
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    classnames = ['hc','pd']
+    OUTPUTS_a = len(classnames)
+    batch_size = 64
+    num_epochs = 50
+    train_loader = dataloader(xdf_dset=df_train,OUTPUTS_a=OUTPUTS_a,
+                              BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=True)
+    val_loader = dataloader(xdf_dset=df_val,OUTPUTS_a=OUTPUTS_a,
+                              BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=True)
+    test_loader = dataloader(xdf_dset=df_test,OUTPUTS_a=OUTPUTS_a,
+                              BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=False)
+    unlabeled_loader = unlabel_dataloader(df_unlabel,OUTPUTS_a=OUTPUTS_a,
+                              BATCH_SIZE = batch_size, IMAGE_SIZE=128,shuffle=False)
+    net = define_cnn(OUTPUTS_a=len(classnames))
+    net.to('cuda')
+
+    model_savename = model_dir + '/cnn9_parkinson.pt'
+    net.load_state_dict(torch.load(model_savename))
+
+    T1 = 100
+    T2 = 700 # change with epoch value
+    af = 0.50 # correlates to confidence level in unlabeled data
+    OUTPUTS_a = len(classnames)
+    semisup_train(net, train_loader, unlabeled_loader, val_loader,epochs)
+
+    net.load_state_dict(torch.load(f=model_dir+"/supervised_weights_disease_ifbatch10.pt"))
+    test_acc, test_loss = evaluate(net, test_loader)
+    print('Test Acc : {:.5f} | Test Loss : {:.3f} '.format(test_acc, test_loss))

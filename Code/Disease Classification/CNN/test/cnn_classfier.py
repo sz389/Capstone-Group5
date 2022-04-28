@@ -1,6 +1,6 @@
 import torch
-from CNN.models.cnn import CNN, train_and_test, evaluate_best_model, add_linear, combine_and_evaluate
-from CNN.models.autoencoder import cal, Encoder, Decoder, Classifier
+from CNN.models.cnn import train_and_test, evaluate_best_model, combine_and_evaluate
+from CNN.models.autoencoder import cal, Encoder, Classifier
 from utility import dataloader,get_n_params
 import pandas as pd
 import argparse
@@ -48,12 +48,12 @@ if __name__ == '__main__':
 
     train_loader = dataloader(train_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
     val_loader = dataloader(val_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
-    test_loader = dataloader(test_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE)
+    test_loader = dataloader(test_df, OUTPUTS_a = OUTPUTS_a, BATCH_SIZE = batch_size, IMAGE_SIZE=IMAGE_SIZE,shuffle=False)
 
     jj, kk = cal(IMAGE_SIZE, num_layers)
     encoder = Encoder(encoded_space_dim=d, jj=jj, kk=kk).to(device)
 
-    # encoder.load_state_dict(torch.load(PATH_SAVE + "encoder_{}_layers.pt".format(num_layers)))
+    encoder.load_state_dict(torch.load(PATH_SAVE + "encoder_{}_layers.pt".format(num_layers)))
     cnn = Classifier(encoder, d, OUTPUTS_a)
 
     model_name = PATH_SAVE+f'/cnn_classifier_{d}.pt'

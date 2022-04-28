@@ -23,7 +23,7 @@ import torchaudio
 import torchaudio.functional as F
 import torchaudio.transforms as T
 from torch.utils import data
-from Wav2vec import dataset
+from Wav2vec2 import dataset
 #%%
 model1 = AutoModelForAudioClassification.from_pretrained("/home/ubuntu/Capstone/saved_model/wav2vec2-base-finetuned-ks/checkpoint-90/")
 #%%
@@ -67,13 +67,6 @@ trainer = Trainer(
     tokenizer=feature_extractor1,
     compute_metrics=compute_metrics
 )
-#%%
-
-# predicts = trainer.predict(test_set)
-# #%%
-# predict12 = predicts[1]
-#%%
-# _, predicted = np.max(predicts.predictions, 1)
 #%%
 class SimpleDataset:
     def __init__(self, tokenized_texts):

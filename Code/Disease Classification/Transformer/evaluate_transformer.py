@@ -1,30 +1,13 @@
 #%%
-from datasets import load_dataset, load_metric
+from datasets import load_metric
 import numpy as np
 import pandas as pd
 from transformers import AutoModelForAudioClassification, TrainingArguments, Trainer
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix,classification_report
-
-
-from pathlib import Path
-from tqdm import tqdm
+from sklearn.metrics import f1_score, accuracy_score, confusion_matrix,classification_report
 from transformers import AutoFeatureExtractor
-from sklearn.preprocessing import LabelEncoder
-
-import torchaudio
-from sklearn.model_selection import train_test_split
-from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 import os
-import torch
-from dataclasses import dataclass
-from typing import Optional, Tuple
-from transformers.file_utils import ModelOutput
 import librosa
-import torchaudio
-import torchaudio.functional as F
-import torchaudio.transforms as T
 from torch.utils import data
-from Wav2vec import compute_metrics
 #%%
 class dataset(data.Dataset):
     '''
@@ -50,8 +33,19 @@ def compute_metrics(eval_pred):
 
 if __name__ == '__main__':
     # define the model information
-    model_path = "/home/ubuntu/Capstone/saved_model/"
-    best_model_path = model_path+"/wav2vec2-base-finetuned-ks/checkpoint-150/"
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--csv_folder", default=None, type=str, required=True)  # Path of csv to load
+    parser.add_argument("--model_dir", default=None, type=str, required=True)  # Path to save the csv file
+    parser.add_argument("--checkpoint_num",default=150,type=int,required=False)
+    args = parser.parse_args()
+    csv_path = args.csv_folder
+    model_path = args.model_dir
+    check_no = args.checkpoint_num
+    if not os.path.exists(model_path):
+        os.makedirs(model_path)
+    best_model_path = model_path+"/wav2vec2-base-finetuned-ks/checkpoint-{}/".format(check_no)
     # best_model_path = model_path + "tiny-random-unispeech-sat-finetuned-ks/checkpoint-30"
     # best_model_path = model_path+"wav2vec2-large-960h-finetuned-ks/checkpoint-150"
     model1 = AutoModelForAudioClassification.from_pretrained(best_model_path)
@@ -60,7 +54,7 @@ if __name__ == '__main__':
     model_checkpoint = "facebook/wav2vec2-base"
     model_name = model_checkpoint.split("/")[-1]
     # define the data and dataset
-    df_test = pd.read_csv("/home/ubuntu/Capstone/data/KCL_test_trim_split_audio.csv")
+    df_test = pd.read_csv(csv_path+"/KCL_test_trim_split_audio.csv")
     test_set = dataset(df_test)
     OUTPUTS_a =2
     labels = ['hc','pd']
@@ -82,8 +76,6 @@ if __name__ == '__main__':
     trainer = Trainer(
         model1,
         args,
-        # train_dataset=trainset,
-        # eval_dataset=testset,
         tokenizer=feature_extractor,
         compute_metrics=compute_metrics
     )
