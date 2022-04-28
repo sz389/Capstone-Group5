@@ -1,16 +1,19 @@
 # About the Data
 
-Accent detection data comes from the following Kaggle archive: https://www.kaggle.com/rtatman/speech-accent-archive?select=recordings. "This dataset contains 2140 speech samples, each from a different talker reading the same reading passage. Talkers come from 177 countries and have 214 different native languages. Each talker is speaking in English." The size of this dataset is 951 MB.
+Accent detection data comes from the following Kaggle archive: https://www.kaggle.com/rtatman/speech-accent-archive?select=recordings. "This dataset contains 2140 speech samples, each from a different talker reading the same reading passage. Talkers come from 177 countries and have 214 different native languages. Each talker is speaking in English." The size of this dataset is 951 MB. In this project, we will focus on top 5 native lanuages and the total number of original data files for those 5 native lanuages is 971. And they are English, Arabic, Spanish, French, and Madarin. The data distribution is showing as below:
 
-Another dataset that will be used for accent detection comes from https://datashare.ed.ac.uk/handle/10283/3443 in which about 100 speakers with various accents read about 400 sentences. The size of this dataset is 10 GB. 
-
+* English: 579
+* Spanish: 162
+* Arabic:  102
+* Mandarin: 65
+* French: 63
 
 # Acessing and Preprocessing the Data
 
 ### Retrieving the Data
 
 ### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data Preprocessing/generate_csv.py" target="_blank">Data Preprocessing</a>
-2. Preprocess the data and create a new csv file to load the audios.  
+Preprocess the data and create a new csv file to load the audios.  
 
 #### Example: 
 
@@ -58,7 +61,7 @@ After user finished the data augmentation, user needs to combine the origin data
 To run Combine_Origin_Augmentated.py, use the follow command as reference:
 ``` 
 python3 -m Combine_Origin_Augmentated --origin_csv_path "/home/ubuntu/Capstone/data_train_val_test/" 
-                        --augmented_csv_path "/home/ubuntu/Capstone/data_csv_0326/augmented_csv/" 
+                         --augmented_csv_path "/home/ubuntu/Capstone/data_csv_0326/augmented_csv/" 
                          --augmented_data_path "/home/ubuntu//Capstone/data_csv_0326/augmented_images"
                          --combined_csv_path "."
                          --origin_csv_name "new_train_trim_split_spec.csv" 
@@ -158,7 +161,7 @@ python3 -m Test.CNN_Classifier --csv_load_path "/home/ubuntu/Capstone/data_train
 
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled CREMA-D data is used along with labeled Accent data. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/CNN/Models/Pseudo_Labeling.py" target="_blank">Peudo Labeling using Semi-Supervised Learning</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/CNN/Models/Pseudo_Labeling.py" target="_blank">Pseudo Labeling using Semi-Supervised Learning</a>
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
@@ -179,7 +182,7 @@ python3 -m Models.Pseudo_Labeling --csv_path "/home/ubuntu/Capstone/data_train_v
 - _train_csv_: the train csv file 
 - _val_csv_: the validation csv file 
 - _test_csv_: the test csv file 
-- _model_path: this is the path of the model 
+- _model_path_: this is the path of the model 
 - _unlabel_csv_path_: unlabeled data csv path
 - _unlabel_csv_name_: unlabeled data csv name
 - _model_name_: this is the best model that user saved before
