@@ -171,7 +171,7 @@ python3 train_cnn.py --csv_load_path "/Age/Data/"
 
 Pseudo labeling is a form of pretraining that allows for the use of unlabeled data; it is primarily used for unbalanced or small datasets. In this repository, unlabeled Accent data is used along with labeled Emotions data. 
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Age/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Peudo Labeling using Semi-Supervised Learning</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Age/Data%20Processing/Pseudo%20Labeling/pseudo_labeling_semisupervised.py" target="_blank">Pseudo Labeling using Semi-Supervised Learning</a>
 
 To run pseudo_labeling_semisupervised.py, use the follow command as reference:
 
