@@ -41,7 +41,7 @@ python3 -m Data_Preprocessing.Trim_Split_Melspec --csv_folder "/home/ubuntu/Caps
 
 # Augmentation
 
-### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data Processing/Augmentation.py" target="_blank">Augmenting Audio</a>
+### <a href="https://github.com/sz389/Capstone-Group5/blob/main/Code/Accent/Data%20Preprocessing/Augmentation.py" target="_blank">Augmenting Audio</a>
 
 Augmentation is a method of generating more data by manipulating and distorting the audio to make it slightly different than the original audio. This creates more data in the training set. This file will output 3 folders: augmented_audio which where all the augmented audio files will be stored, augmented_csv where Augmented_Audio_Train.csv and Augmented_Images_Train.csv are stored and augmented_images where all the augmented Mel Spectrograms are stored. The Augmented_Images_Train.csv can be used to replace emotion_train.csv for any training algorithms. 
 
