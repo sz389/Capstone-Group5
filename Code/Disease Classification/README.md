@@ -8,7 +8,7 @@ _Hagen Jaeger, Dhaval Trivedi, & Michael Stadtschnitzer. (2019). Mobile Device V
 _Keith Ito &  Linda Johnson. (2017). The LJ Speech Dataset. LJspeech17. https://keithito.com/LJ-Speech-Dataset/_
 
 
-# Acessing and Preprocessing the Data
+# Accessing and Preprocessing the Data
 
 ### Retrieving the Data
 
